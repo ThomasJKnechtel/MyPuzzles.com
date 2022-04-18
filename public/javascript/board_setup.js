@@ -4,7 +4,7 @@
  * @param {ChessBoard} board the board that displays the game
  * @param {Chess} game the Chess object representing the state of the board
  */
-function boardSetUp(board, game){
+function boardSetUp(board, game, onMoveMade){
 
     var $status = $('#status')
     var $fen = $('#fen')
@@ -22,68 +22,76 @@ function boardSetUp(board, game){
     }
 
     function onDrop (source, target) {
-    // see if the move is legal
-    var move = game.move({
-        from: source,
-        to: target,
-        promotion: 'q' // NOTE: always promote to a queen for example simplicity
-    })
+        // see if the move is legal
+        var move = game.move({
+            from: source,
+            to: target,
+            promotion: 'q' // NOTE: always promote to a queen for example simplicity
+        })
 
-    // illegal move
-    if (move === null) return 'snapback'
+        // illegal move
+        if (move === null) return 'snapback'
 
-    updateStatus()
+        updateStatus()
+        onMoveMade(game)
     }
 
     // update the board position after the piece snap
     // for castling, en passant, pawn promotion
     function onSnapEnd () {
-    board.position(game.fen())
+        board.position(game.fen())
     }
 
     function updateStatus () {
-    var status = ''
+        var status = ''
 
-    var moveColor = 'White'
-    if (game.turn() === 'b') {
-        moveColor = 'Black'
-    }
-
-    // checkmate?
-    if (game.in_checkmate()) {
-        status = 'Game over, ' + moveColor + ' is in checkmate.'
-    }
-
-    // draw?
-    else if (game.in_draw()) {
-        status = 'Game over, drawn position'
-    }
-
-    // game still on
-    else {
-        status = moveColor + ' to move'
-
-        // check?
-        if (game.in_check()) {
-        status += ', ' + moveColor + ' is in check'
+        var moveColor = 'White'
+        if (game.turn() === 'b') {
+            moveColor = 'Black'
         }
-    }
 
-    $status.html(status)
-    $fen.html(game.fen())
-    $pgn.html(game.pgn())
+        // checkmate?
+        if (game.in_checkmate()) {
+            status = 'Game over, ' + moveColor + ' is in checkmate.'
+        }
+
+        // draw?
+        else if (game.in_draw()) {
+            status = 'Game over, drawn position'
+        }
+
+        // game still on
+        else {
+            status = moveColor + ' to move'
+
+            // check?
+            if (game.in_check()) {
+            status += ', ' + moveColor + ' is in check'
+            }
+        }
+
+        $status.html(status)
+        $fen.html(game.fen())
+        $pgn.html(game.pgn())
     }
 
     var config = {
-    draggable: true,
-    position: 'start',
-    onDragStart: onDragStart,
-    onDrop: onDrop,
-    onSnapEnd: onSnapEnd
+        draggable: true,
+        position: 'start',
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onSnapEnd: onSnapEnd
     }
     board = Chessboard('myBoard', config)
 
     updateStatus()
 
 
+}
+/**
+ * Updates the scoresheet to reflect the game position
+ * @param {Chess} game the Chess object representing the state of the board
+ */
+function updateScoreSheet(game){
+    console.log(game.history())
 }
