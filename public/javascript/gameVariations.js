@@ -1,3 +1,4 @@
+let count = 0
 /**
  * creates a variation object storing the sequence of moves and any sub-variations.
  * @param {Integer} startingPly the ply that the variation starts at
@@ -5,6 +6,7 @@
  * @returns the Variation Object
  */
 function Variation(startingPly, FEN){
+    count++
     this.startingPly= startingPly
     this.FEN = FEN
     this.currentPly=startingPly
@@ -13,7 +15,8 @@ function Variation(startingPly, FEN){
     this.moves = []
     this.fens = []
     this.variations=[]
-
+    this.variationNumber = count
+    
     this.addSubVariation = function(startingPly, FEN){
         let subvariation = new Variation(startingPly, FEN)
         this.variations.push(subvariation)
@@ -40,7 +43,7 @@ function Variation(startingPly, FEN){
                 this.variations.map((variation)=>{
                     if(variation.size!=0){
                         if(variation.startingPly==ply){
-                            pgn+="( "+variation.getPGN()+" )"
+                            pgn+="( ..."+variation.getPGN()+" )"
                         }
                     }
                 })
@@ -53,13 +56,18 @@ function Variation(startingPly, FEN){
         let pgnHTML = ""
         let ply=startingPly
         this.moves.map((move)=>{
-            pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' ply="+ply+">"+Math.ceil((ply+1)/2)+" "+move+" </label>"
+            if((ply-startingPly)%2){
+                pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' varNumber="+this.variationNumber+" ply="+ply+">"+" "+move+" </label>"
+            }
+            else{
+                pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' varNumber="+this.variationNumber+" ply="+ply+">"+Math.ceil((ply+1)/2)+" "+move+" </label>"
+            }
             ply++
             if(this.variations.length!=0){
                 this.variations.map((variation)=>{
                     if(variation.size!=0){
                         if(variation.startingPly==ply){
-                            pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' ply="+ply+">( "+variation.getPGNHTML()+" )</label>"
+                            pgnHTML+="<label>( ..."+variation.getPGNHTML()+" )</label>"
                         }
                     }
                 })

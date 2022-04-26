@@ -117,11 +117,12 @@ function boardSetUp(board, game, variation){
 }
 
 function moveClicked(elem){
+    let varNumber=parseInt(elem.outerHTML.split("varnumber=")[1].split(" ")[0].replace("\"",""))
     let ply=parseInt(elem.outerHTML.split("ply=")[1].split(">")[0].replace("\"",""))
     let move = elem.innerText.split(" ")[1]
     boardState.currentPly=ply
     boardState.variations.map((variation)=>{
-        if(variation.hasMove(move, ply)){
+        if(variation.variationNumber==varNumber){
             boardState.currentVariation=variation
         }
     })
