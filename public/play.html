@@ -17,22 +17,15 @@
     <script>
         let board = Chessboard('myBoard');
         let game = new Chess();
-        let variation = new Variation(0)
-        boardSetUp(board, game, variation);
-        function moveClicked(elem){
-            let a = elem.outerHTML.split("ply=")[1]
-            let ply=parseInt(elem.outerHTML.split("ply=")[1].split(">")[0].replace("\"",""))
-            let move = elem.innerText.split(" ")[1]
-            function getVariation(variation){
-                if(variation.hasMove(move,ply)){
-                    return variation
-                }
-                else if(variation.variations.length>0){
-                    return variation.variations.map(getVariation(varN))
-                }
-            }
-            getVariation(variation)
+        let variation = new Variation(0, game.fen())
+        let boardState={
+            currentVariation:variation,
+            mainVariation:variation,
+            currentPly:0,
+            variations:[variation]
         }
+        boardSetUp(board, game, variation);
+        
     </script>
 </body>
 </html>

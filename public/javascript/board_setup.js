@@ -1,3 +1,4 @@
+
 /**
  * sets up board to only allow legal moves.
  * Taken from: https://www.chessboardjs.com/examples/5000 
@@ -5,7 +6,6 @@
  * @param {Chess} game the Chess object representing the state of the board
  */
 function boardSetUp(board, game, variation){
-    let currentVariation=variation
     
     let $status = $('#status')
     let $fen = $('#fen')
@@ -32,10 +32,34 @@ function boardSetUp(board, game, variation){
 
         // illegal move
         if (move === null) return 'snapback'
-
+       
         updateStatus()
-        currentVariation.addMove(move.san)
-        document.getElementById("pgnContainer").innerHTML=variation.getPGNHTML()
+        let currentVariation = boardState.currentVariation
+        boardState.currentPly++
+        if(boardState.currentPly<currentVariation.size+currentVariation.startingPly){  //if not at end of variation
+                
+            if(currentVariation.variations.length>0&&currentVariation.variations.map((subVariation)=>{    //if subvariation has move
+                    if(subVariation.hasMove(move.san, boardState.currentPly)){
+                        currentVariation=subVariation
+                        return true
+                    }
+            })){
+                return true
+            }
+            else if(!currentVariation.hasMove(move.san, boardState.currentPly)){    //if current variation doesnt have move
+                boardState.currentVariation=currentVariation.addSubVariation(boardState.currentPly, game.fen())
+                boardState.variations.push(boardState.currentVariation)
+                boardState.currentVariation.addMove(move.san, game.fen())
+                document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
+            }
+            
+        }
+        else{   //at end of variation
+            currentVariation.addMove(move.san, game.fen())
+            boardState.currentPly++
+            document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
+        }
+        
 
     }
 
@@ -80,7 +104,7 @@ function boardSetUp(board, game, variation){
 
     let config = {
         draggable: true,
-        position: 'start',
+        position: game.fen(),
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
@@ -89,5 +113,19 @@ function boardSetUp(board, game, variation){
 
     updateStatus()
 
+
+}
+
+function moveClicked(elem){
+    let ply=parseInt(elem.outerHTML.split("ply=")[1].split(">")[0].replace("\"",""))
+    let move = elem.innerText.split(" ")[1]
+    boardState.currentPly=ply
+    boardState.variations.map((variation)=>{
+        if(variation.hasMove(move, ply)){
+            boardState.currentVariation=variation
+        }
+    })
+    game=new Chess( boardState.currentVariation.fens[ply-boardState.currentVariation.startingPly])
+    boardSetUp(board, game, boardState.currentVariation.fens[ply-boardState.currentVariation.startingPly])
 
 }

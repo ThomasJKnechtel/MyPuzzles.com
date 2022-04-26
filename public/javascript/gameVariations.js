@@ -1,26 +1,32 @@
 /**
  * creates a variation object storing the sequence of moves and any sub-variations.
  * @param {Integer} startingPly the ply that the variation starts at
+ * @param {str} FEN the FEN representing the starting position
  * @returns the Variation Object
  */
-function Variation(startingPly){
+function Variation(startingPly, FEN){
     this.startingPly= startingPly
+    this.FEN = FEN
     this.currentPly=startingPly
     this.variationIndex=0
     this.size = 0
     this.moves = []
+    this.fens = []
     this.variations=[]
 
-    this.addSubVariation = function(startingPly){
-        this.variations.push(createVariation(startingPly))
+    this.addSubVariation = function(startingPly, FEN){
+        let subvariation = new Variation(startingPly, FEN)
+        this.variations.push(subvariation)
+        return subvariation
     }    
-    this.addMove = function(move){
+    this.addMove = function(move, FEN){
         this.moves.push(move)
+        this.fens.push(FEN)
         this.size++
     }
     this.hasMove = function(move, ply){
-        if(this.size>ply){
-            if(this.moves[ply]==move)return true
+        if(this.size>ply-startingPly){
+            if(this.moves[ply-startingPly]==move)return true
             return false
         }
     }
@@ -45,7 +51,7 @@ function Variation(startingPly){
     }
     this.getPGNHTML = function(){
         let pgnHTML = ""
-        let ply=0
+        let ply=startingPly
         this.moves.map((move)=>{
             pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' ply="+ply+">"+Math.ceil((ply+1)/2)+" "+move+" </label>"
             ply++
