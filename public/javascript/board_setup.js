@@ -4,26 +4,27 @@
  * @param {ChessBoard} board the board that displays the game
  * @param {Chess} game the Chess object representing the state of the board
  */
-function boardSetUp(board, game, onMoveMade){
-
-    var $status = $('#status')
-    var $fen = $('#fen')
-    var $pgn = $('#pgn')
+function boardSetUp(board, game, variation){
+    let currentVariation=variation
+    
+    let $status = $('#status')
+    let $fen = $('#fen')
+    let $pgn = $('#pgn')
 
     function onDragStart (source, piece, position, orientation) {
-    // do not pick up pieces if the game is over
-    if (game.game_over()) return false
+        // do not pick up pieces if the game is over
+        if (game.game_over()) return false
 
-    // only pick up pieces for the side to move
-    if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-        return false
-    }
+        // only pick up pieces for the side to move
+        if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+            return false
+        }
     }
 
     function onDrop (source, target) {
         // see if the move is legal
-        var move = game.move({
+        let move = game.move({
             from: source,
             to: target,
             promotion: 'q' // NOTE: always promote to a queen for example simplicity
@@ -33,7 +34,9 @@ function boardSetUp(board, game, onMoveMade){
         if (move === null) return 'snapback'
 
         updateStatus()
-        onMoveMade(game)
+        currentVariation.addMove(move.san)
+        document.getElementById("pgnContainer").innerHTML=variation.getPGNHTML()
+
     }
 
     // update the board position after the piece snap
@@ -43,9 +46,9 @@ function boardSetUp(board, game, onMoveMade){
     }
 
     function updateStatus () {
-        var status = ''
+        let status = ''
 
-        var moveColor = 'White'
+        let moveColor = 'White'
         if (game.turn() === 'b') {
             moveColor = 'Black'
         }
@@ -75,7 +78,7 @@ function boardSetUp(board, game, onMoveMade){
         $pgn.html(game.pgn())
     }
 
-    var config = {
+    let config = {
         draggable: true,
         position: 'start',
         onDragStart: onDragStart,
@@ -87,11 +90,4 @@ function boardSetUp(board, game, onMoveMade){
     updateStatus()
 
 
-}
-/**
- * Updates the scoresheet to reflect the game position
- * @param {Chess} game the Chess object representing the state of the board
- */
-function updateScoreSheet(game){
-    console.log(game.history())
 }

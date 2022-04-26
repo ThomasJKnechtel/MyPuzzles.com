@@ -7,16 +7,32 @@
 <body>
 
     <div id="myBoard" style="width: 400px"></div>
-   
+    <div id="pgnContainer" style="width: 400px;"></div>
       
     <img src="img/chesspieces/wikipedia/wP.png" id="695f-6e79-ab1c-a5cc-a26f-4b18-88d5-0388" alt="" class="piece-417db" data-piece="wP" style="width: 49px; height: 49px; display: none;">
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js" crossorigin="anonymous"></script>   
     <script src="javascript/board_setup.js"></script>
+    <script src="javascript/gameVariations.js"></script>
     <script>
-        var board = Chessboard('myBoard');
-        var game = new Chess();
-        boardSetUp(board, game, updateScoreSheet);
+        let board = Chessboard('myBoard');
+        let game = new Chess();
+        let variation = new Variation(0)
+        boardSetUp(board, game, variation);
+        function moveClicked(elem){
+            let a = elem.outerHTML.split("ply=")[1]
+            let ply=parseInt(elem.outerHTML.split("ply=")[1].split(">")[0].replace("\"",""))
+            let move = elem.innerText.split(" ")[1]
+            function getVariation(variation){
+                if(variation.hasMove(move,ply)){
+                    return variation
+                }
+                else if(variation.variations.length>0){
+                    return variation.variations.map(getVariation(varN))
+                }
+            }
+            getVariation(variation)
+        }
     </script>
 </body>
 </html>
