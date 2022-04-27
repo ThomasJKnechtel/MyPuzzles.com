@@ -60,7 +60,7 @@ function Variation(startingPly, FEN){
                 pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' varNumber="+this.variationNumber+" ply="+ply+">"+" "+move+" </label>"
             }
             else{
-                pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' varNumber="+this.variationNumber+" ply="+ply+">"+Math.ceil((ply+1)/2)+" "+move+" </label>"
+                pgnHTML+="<label class='moveLabel' onclick='moveClicked(this)' varNumber="+this.variationNumber+" ply="+ply+"><b>"+Math.ceil((ply+1)/2)+"</b> "+move+" </label>"
             }
             ply++
             if(this.variations.length!=0){

@@ -115,7 +115,10 @@ function boardSetUp(board, game, variation){
 
 
 }
-
+/**
+ * On move click update board to the position requested
+ * @param {HTMLElement} elem the element that was clicked
+ */
 function moveClicked(elem){
     let varNumber=parseInt(elem.outerHTML.split("varnumber=")[1].split(" ")[0].replace("\"",""))
     let ply=parseInt(elem.outerHTML.split("ply=")[1].split(">")[0].replace("\"",""))

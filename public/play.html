@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 100%; background-color:grey">
 <header>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
+    <link rel="stylesheet" href="/public/css/play.css">
+    <link href='https://css.gg/stopwatch.css' rel='stylesheet'>
 </header>
 <body>
-
-    <div id="myBoard" style="width: 400px"></div>
-    <div id="pgnContainer" style="width: 400px;"></div>
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; height: 100%;">
+        <i class="gg-stopwatch" style="margin-top: 50px; margin-left:30px; transform: scale(var(--ggs,3)); width: 30px; height: 30px;"></i>
+        <div style="width: 80%; display: flex; justify-content: center;">
+            <div id="myBoard" style="width: 50%"></div>
+        </div>
+       
+        <div id="pgnContainer" style="width: 15%; border-style: solid; border-color: rgb(207, 207, 207); background-color: rgb(167, 167, 167);"></div>
+    </div>
+    
       
     <img src="img/chesspieces/wikipedia/wP.png" id="695f-6e79-ab1c-a5cc-a26f-4b18-88d5-0388" alt="" class="piece-417db" data-piece="wP" style="width: 49px; height: 49px; display: none;">
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
