@@ -8,9 +8,16 @@
 </header>
 <body>
     <div style="display: flex; justify-content: center; flex-wrap: wrap; height: 100%;">
-        <i class="gg-stopwatch" style="margin-top: 50px; margin-left:30px; transform: scale(var(--ggs,3)); width: 30px; height: 30px;"></i>
-        <div style="width: 80%; display: flex; justify-content: center;">
-            <div id="myBoard" style="width: 50%"></div>
+        <div>
+            <div style="width: 200px; height: 100px;">
+                <i class="gg-stopwatch" style="margin-top: 50px; margin-left:30px; transform: scale(var(--ggs,3)); width: 30px; height: 30px;"></i>
+            </div>
+            <label id="timer" style="font-size: 20px;"></label>
+        </div>
+        
+        
+        <div style="width: 40%;">
+            <div id="myBoard" style="width: 100%"></div>
         </div>
        
         <div id="pgnContainer" style="width: 15%; border-style: solid; border-color: rgb(207, 207, 207); background-color: rgb(167, 167, 167);"></div>
@@ -22,6 +29,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js" crossorigin="anonymous"></script>   
     <script src="javascript/board_setup.js"></script>
     <script src="javascript/gameVariations.js"></script>
+    <script src="javascript/timer.js"></script>
     <script>
         let board = Chessboard('myBoard');
         let game = new Chess();
@@ -33,6 +41,7 @@
             variations:[variation]
         }
         boardSetUp(board, game, variation);
+        countdown(10000, 1000, "timer")
         
     </script>
 </body>
