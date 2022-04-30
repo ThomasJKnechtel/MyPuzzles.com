@@ -1,29 +1,30 @@
+
 /**
  * sets up board to only allow legal moves.
  * Taken from: https://www.chessboardjs.com/examples/5000 
  * @param {ChessBoard} board the board that displays the game
  * @param {Chess} game the Chess object representing the state of the board
  */
-function boardSetUp(board, game, onMoveMade){
-
-    var $status = $('#status')
-    var $fen = $('#fen')
-    var $pgn = $('#pgn')
+function boardSetUp(board, game, variation){
+    
+    let $status = $('#status')
+    let $fen = $('#fen')
+    let $pgn = $('#pgn')
 
     function onDragStart (source, piece, position, orientation) {
-    // do not pick up pieces if the game is over
-    if (game.game_over()) return false
+        // do not pick up pieces if the game is over
+        if (game.game_over()) return false
 
-    // only pick up pieces for the side to move
-    if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-        return false
-    }
+        // only pick up pieces for the side to move
+        if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+            return false
+        }
     }
 
     function onDrop (source, target) {
         // see if the move is legal
-        var move = game.move({
+        let move = game.move({
             from: source,
             to: target,
             promotion: 'q' // NOTE: always promote to a queen for example simplicity
@@ -31,9 +32,35 @@ function boardSetUp(board, game, onMoveMade){
 
         // illegal move
         if (move === null) return 'snapback'
-
+       
         updateStatus()
-        onMoveMade(game)
+        let currentVariation = boardState.currentVariation
+        boardState.currentPly++
+        if(boardState.currentPly<currentVariation.size+currentVariation.startingPly){  //if not at end of variation
+                
+            if(currentVariation.variations.length>0&&currentVariation.variations.map((subVariation)=>{    //if subvariation has move
+                    if(subVariation.hasMove(move.san, boardState.currentPly)){
+                        currentVariation=subVariation
+                        return true
+                    }
+            })){
+                return true
+            }
+            else if(!currentVariation.hasMove(move.san, boardState.currentPly)){    //if current variation doesnt have move
+                boardState.currentVariation=currentVariation.addSubVariation(boardState.currentPly, game.fen())
+                boardState.variations.push(boardState.currentVariation)
+                boardState.currentVariation.addMove(move.san, game.fen())
+                document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
+            }
+            
+        }
+        else{   //at end of variation
+            currentVariation.addMove(move.san, game.fen())
+            boardState.currentPly++
+            document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
+        }
+        
+
     }
 
     // update the board position after the piece snap
@@ -43,9 +70,9 @@ function boardSetUp(board, game, onMoveMade){
     }
 
     function updateStatus () {
-        var status = ''
+        let status = ''
 
-        var moveColor = 'White'
+        let moveColor = 'White'
         if (game.turn() === 'b') {
             moveColor = 'Black'
         }
@@ -75,9 +102,9 @@ function boardSetUp(board, game, onMoveMade){
         $pgn.html(game.pgn())
     }
 
-    var config = {
+    let config = {
         draggable: true,
-        position: 'start',
+        position: game.fen(),
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
@@ -89,9 +116,20 @@ function boardSetUp(board, game, onMoveMade){
 
 }
 /**
- * Updates the scoresheet to reflect the game position
- * @param {Chess} game the Chess object representing the state of the board
+ * On move click update board to the position requested
+ * @param {HTMLElement} elem the element that was clicked
  */
-function updateScoreSheet(game){
-    console.log(game.history())
+function moveClicked(elem){
+    let varNumber=parseInt(elem.outerHTML.split("varnumber=")[1].split(" ")[0].replace("\"",""))
+    let ply=parseInt(elem.outerHTML.split("ply=")[1].split(">")[0].replace("\"",""))
+    let move = elem.innerText.split(" ")[1]
+    boardState.currentPly=ply
+    boardState.variations.map((variation)=>{
+        if(variation.variationNumber==varNumber){
+            boardState.currentVariation=variation
+        }
+    })
+    game=new Chess( boardState.currentVariation.fens[ply-boardState.currentVariation.startingPly])
+    boardSetUp(board, game, boardState.currentVariation.fens[ply-boardState.currentVariation.startingPly])
+
 }

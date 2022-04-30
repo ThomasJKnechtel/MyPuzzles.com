@@ -1,22 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 100%; background-color:grey">
 <header>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
+    <link rel="stylesheet" href="/public/css/play.css">
+    <link href='https://css.gg/stopwatch.css' rel='stylesheet'>
 </header>
 <body>
-
-    <div id="myBoard" style="width: 400px"></div>
-   
+    <div style="display: flex; justify-content:space-around; flex-wrap: wrap; height: 100%;">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
+            <div style="width: 130px; height: 80px; display: flex; justify-content: center;">
+                <i class="gg-stopwatch" style=" transform: scale(var(--ggs,3)); width: 30px; height: 30px;"></i>
+            </div>
+            <label id="timer" style="font-size: 20px;"></label>
+        </div>
+        
+        
+        <div style="width: 40%;">
+            <div id="myBoard" style="width: 100%"></div>
+        </div>
+       
+        <div id="pgnContainer" style="width: 15%; border-style: solid; border-color: rgb(207, 207, 207); background-color: rgb(167, 167, 167);"></div>
+    </div>
+    
       
     <img src="img/chesspieces/wikipedia/wP.png" id="695f-6e79-ab1c-a5cc-a26f-4b18-88d5-0388" alt="" class="piece-417db" data-piece="wP" style="width: 49px; height: 49px; display: none;">
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js" crossorigin="anonymous"></script>   
     <script src="javascript/board_setup.js"></script>
+    <script src="javascript/gameVariations.js"></script>
+    <script src="javascript/timer.js"></script>
     <script>
-        var board = Chessboard('myBoard');
-        var game = new Chess();
-        boardSetUp(board, game, updateScoreSheet);
+        const getGameData = async function fetchGameData(){
+            let gameData = await fetch('/play/game_data')
+            if(gameData.status=='200'){
+                return gameData.json()
+            }
+        }
+        let board = Chessboard('myBoard');
+        let game = new Chess();
+        let variation = new Variation(0, game.fen())
+        let boardState={
+            currentVariation:variation,
+            mainVariation:variation,
+            currentPly:0,
+            variations:[variation]
+        }
+        boardSetUp(board, game, variation);
+        countdown(10000, 1000, "timer")
+        
     </script>
 </body>
 </html>
