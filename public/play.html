@@ -3,7 +3,7 @@
 <header>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
-    <link rel="stylesheet" href="/public/css/play.css">
+    <link rel="stylesheet" href="/css/play.css">
     <link href='https://css.gg/stopwatch.css' rel='stylesheet'>
 </header>
 <body>
@@ -31,23 +31,30 @@
     <script src="javascript/gameVariations.js"></script>
     <script src="javascript/timer.js"></script>
     <script>
-        const getGameData = async function fetchGameData(){
-            let gameData = await fetch('/play/game_data')
-            if(gameData.status=='200'){
-                return gameData.json()
+        const startGame = async function startGame(){
+            let gameData = null
+
+            const getGameData = async function fetchGameData(){
+                gameData = await fetch('/play/game_data')
+                if(gameData.status=='200'){
+                    gameData = await gameData.json()
+                }
             }
+            await getGameData()
+            let board = Chessboard('myBoard');
+            let game = new Chess(gameData.fen);
+            let variation = new Variation(0, game.fen())
+            let boardState={
+                currentVariation:variation,
+                mainVariation:variation,
+                currentPly:0,
+                variations:[variation]
+            }
+            boardSetUp(board, game, variation);
+            countdown(10000, 1000, "timer")
         }
-        let board = Chessboard('myBoard');
-        let game = new Chess();
-        let variation = new Variation(0, game.fen())
-        let boardState={
-            currentVariation:variation,
-            mainVariation:variation,
-            currentPly:0,
-            variations:[variation]
-        }
-        boardSetUp(board, game, variation);
-        countdown(10000, 1000, "timer")
+        startGame()
+        
         
     </script>
 </body>

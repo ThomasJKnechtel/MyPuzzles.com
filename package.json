@@ -15,10 +15,10 @@
     "google-auth-library": "^7.14.1",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^9.2.2",
-    "nodejs": "0.0.0",
-    "nodemon": "^2.0.15"
+    "nodejs": "0.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.13.0"
+    "eslint": "^8.13.0",
+    "nodemon": "^2.0.16"
   }
 }
