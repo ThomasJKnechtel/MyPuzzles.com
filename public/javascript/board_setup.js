@@ -5,7 +5,7 @@
  * @param {ChessBoard} board the board that displays the game
  * @param {Chess} game the Chess object representing the state of the board
  */
-function boardSetUp(board, game, variation){
+function boardSetUp(board, game, continuation, boardState){
     
     let $status = $('#status')
     let $fen = $('#fen')
@@ -33,34 +33,10 @@ function boardSetUp(board, game, variation){
         // illegal move
         if (move === null) return 'snapback'
        
-        updateStatus()
-        let currentVariation = boardState.currentVariation
-        boardState.currentPly++
-        if(boardState.currentPly<currentVariation.size+currentVariation.startingPly){  //if not at end of variation
-                
-            if(currentVariation.variations.length>0&&currentVariation.variations.map((subVariation)=>{    //if subvariation has move
-                    if(subVariation.hasMove(move.san, boardState.currentPly)){
-                        currentVariation=subVariation
-                        return true
-                    }
-            })){
-                return true
-            }
-            else if(!currentVariation.hasMove(move.san, boardState.currentPly)){    //if current variation doesnt have move
-                boardState.currentVariation=currentVariation.addSubVariation(boardState.currentPly, game.fen())
-                boardState.variations.push(boardState.currentVariation)
-                boardState.currentVariation.addMove(move.san, game.fen())
-                document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
-            }
-            
-        }
-        else{   //at end of variation
-            currentVariation.addMove(move.san, game.fen())
-            boardState.currentPly++
-            document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
-        }
-        
-
+        updateStatus()     
+        updateProgress(boardState,continuation,move)
+        updateScoreSheet(boardState, move, game)
+        console.log(boardState.progress)
     }
 
     // update the board position after the piece snap
@@ -130,6 +106,44 @@ function moveClicked(elem){
         }
     })
     game=new Chess( boardState.currentVariation.fens[ply-boardState.currentVariation.startingPly])
-    boardSetUp(board, game, boardState.currentVariation.fens[ply-boardState.currentVariation.startingPly])
+    boardSetUp(board, game, gameData.continuation,boardState)
 
+}
+
+function updateScoreSheet(boardState, move, game){
+    let currentVariation = boardState.currentVariation
+    boardState.currentPly++
+    if(boardState.currentPly<currentVariation.size+currentVariation.startingPly){  //if not at end of variation
+            
+        if(currentVariation.variations.length>0&&currentVariation.variations.map((subVariation)=>{    //if subvariation has move
+                if(subVariation.hasMove(move.san, boardState.currentPly)){
+                    currentVariation=subVariation
+                    return true
+                }
+        })){
+            return true
+        }
+        else if(!currentVariation.hasMove(move.san, boardState.currentPly)){    //if current variation doesnt have move
+            boardState.currentVariation=currentVariation.addSubVariation(boardState.currentPly, game.fen())
+            boardState.variations.push(boardState.currentVariation)
+            boardState.currentVariation.addMove(move.san, game.fen())
+            document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
+        }
+        
+    }
+    else{   //at end of variation
+        currentVariation.addMove(move.san, game.fen())
+        document.getElementById("pgnContainer").innerHTML=boardState.mainVariation.getPGNHTML()
+    }
+}
+function updateProgress(boardState, continuation, move){
+    if(boardState.progress == "Solving"){
+        if(boardState.currentVariation!=boardState.mainVariation){
+            boardState.progress = "Failed"
+        }else if(move.san!=continuation[boardState.currentPly]){
+            boardState.progress="Failed"
+        }else if(boardState.currentPly==continuation.length-1){
+            boardState.progress="Passed"
+        }
+    }
 }

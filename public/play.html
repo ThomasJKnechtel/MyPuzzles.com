@@ -48,9 +48,10 @@
                 currentVariation:variation,
                 mainVariation:variation,
                 currentPly:0,
-                variations:[variation]
+                variations:[variation],
+                progress:"Solving"
             }
-            boardSetUp(board, game, variation);
+            boardSetUp(board, game, gameData.continuation.split(" "), boardState);
             countdown(10000, 1000, "timer")
         }
         startGame()
