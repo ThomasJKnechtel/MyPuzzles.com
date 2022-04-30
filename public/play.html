@@ -7,10 +7,10 @@
     <link href='https://css.gg/stopwatch.css' rel='stylesheet'>
 </header>
 <body>
-    <div style="display: flex; justify-content: center; flex-wrap: wrap; height: 100%;">
-        <div>
-            <div style="width: 200px; height: 100px;">
-                <i class="gg-stopwatch" style="margin-top: 50px; margin-left:30px; transform: scale(var(--ggs,3)); width: 30px; height: 30px;"></i>
+    <div style="display: flex; justify-content:space-around; flex-wrap: wrap; height: 100%;">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
+            <div style="width: 130px; height: 80px; display: flex; justify-content: center;">
+                <i class="gg-stopwatch" style=" transform: scale(var(--ggs,3)); width: 30px; height: 30px;"></i>
             </div>
             <label id="timer" style="font-size: 20px;"></label>
         </div>
@@ -31,6 +31,12 @@
     <script src="javascript/gameVariations.js"></script>
     <script src="javascript/timer.js"></script>
     <script>
+        const getGameData = async function fetchGameData(){
+            let gameData = await fetch('/play/game_data')
+            if(gameData.status=='200'){
+                return gameData.json()
+            }
+        }
         let board = Chessboard('myBoard');
         let game = new Chess();
         let variation = new Variation(0, game.fen())
