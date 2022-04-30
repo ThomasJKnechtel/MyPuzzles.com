@@ -23,20 +23,14 @@ function boardSetUp(board, game, continuation, boardState){
     }
 
     function onDrop (source, target) {
-        // see if the move is legal
-        let move = game.move({
-            from: source,
-            to: target,
-            promotion: 'q' // NOTE: always promote to a queen for example simplicity
-        })
-
-        // illegal move
-        if (move === null) return 'snapback'
-       
+        let move = addMove({from: source,to: target, promotion: 'q' }, game, boardState)
+        if(move==null) return "snapback"
+        
         updateStatus()     
         updateProgress(boardState,continuation,move)
         updateScoreSheet(boardState, move, game)
-        console.log(boardState.progress)
+        if(boardState.progress=="Solving") addMove(continuation[boardState.currentPly],game,boardState)
+        updateStatus()
     }
 
     // update the board position after the piece snap
@@ -88,7 +82,9 @@ function boardSetUp(board, game, continuation, boardState){
     board = Chessboard('myBoard', config)
 
     updateStatus()
-
+    if(boardState.progress=="Solving"){
+        
+    }
 
 }
 /**
@@ -109,10 +105,15 @@ function moveClicked(elem){
     boardSetUp(board, game, gameData.continuation,boardState)
 
 }
+function addMove(move, game, boardState){
+    // see if the move is legal
+    let moveVal = game.move(move)
+    boardState.currentPly++
+    return moveVal
+}
 
 function updateScoreSheet(boardState, move, game){
     let currentVariation = boardState.currentVariation
-    boardState.currentPly++
     if(boardState.currentPly<currentVariation.size+currentVariation.startingPly){  //if not at end of variation
             
         if(currentVariation.variations.length>0&&currentVariation.variations.map((subVariation)=>{    //if subvariation has move
@@ -140,9 +141,9 @@ function updateProgress(boardState, continuation, move){
     if(boardState.progress == "Solving"){
         if(boardState.currentVariation!=boardState.mainVariation){
             boardState.progress = "Failed"
-        }else if(move.san!=continuation[boardState.currentPly]){
+        }else if(move.san!=continuation[boardState.currentPly-1]){
             boardState.progress="Failed"
-        }else if(boardState.currentPly==continuation.length-1){
+        }else if(boardState.currentPly==continuation.length){
             boardState.progress="Passed"
         }
     }
