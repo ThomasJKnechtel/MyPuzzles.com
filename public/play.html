@@ -16,8 +16,11 @@
         </div>
         
         
-        <div style="width: 40%;">
-            <div id="myBoard" style="width: 100%"></div>
+        <div style="width: 40%; position: relative;">
+            <div id="myBoard" style="width: 100%">
+               
+            </div>
+             <div id="promotionPopup"></div>
         </div>
        
         <div id="pgnContainer" style="width: 15%; border-style: solid; border-color: rgb(207, 207, 207); background-color: rgb(167, 167, 167);"></div>
@@ -49,9 +52,44 @@
                 mainVariation:variation,
                 currentPly:0,
                 variations:[variation],
-                progress:"Solving"
+                progress:"Solving",
+                promotionInProgress:false,
+                promotionMove: null
+
             }
-            boardSetUp(board, game, gameData.continuation.split(" "), boardState);
+            const promote = function promote(elem){
+                const type =  this.getAttribute('type')
+                let div = document.getElementById('promotionPopup')
+                div.innerHTML = ""
+                div.style = "display: none;"
+                let move = boardState.promotionMove
+                move.promotion = type
+                addMove(move,game, boardState)
+                updateStatus()
+            }
+            const displayPromotionPopup = function displayPromotionPopup(white, fileNumber, rank){
+                const peiceImageNames = ['wQ.png','wN.png','wR.png','wB.png', 'bQ.png', 'bN.png','bR.png','bB.png']
+                const pieceTypes = ['q','n','r','b']
+                for(let i=0; i<4; i++){
+                    let peiceButton = document.createElement('button')
+                    peiceButton.onclick = promote
+                    peiceButton.setAttribute('type',pieceTypes[i])
+                    peiceButton.style="width: fit-content; height: fit-content;"
+                    let image = document.createElement('img')
+                    let index=i
+                    if(!white)index+=4
+                    image.setAttribute('src',"img/chesspieces/wikipedia/"+peiceImageNames[index])
+                    image.style="width: 100%;"
+                    peiceButton.appendChild(image)
+                    
+                    let div = document.getElementById('promotionPopup')
+                    div.appendChild(peiceButton)
+                    div.style="width: 12.5%; height:200px;position: absolute; z-index: 1; top:0; left:"+fileNumber*50
+                }
+                
+            }
+            
+            boardSetUp(board, game, gameData.continuation.split(" "), boardState, displayPromotionPopup);
             countdown(10000, 1000, "timer")
         }
         startGame()

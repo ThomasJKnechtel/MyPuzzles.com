@@ -5,7 +5,7 @@
  * @param {ChessBoard} board the board that displays the game
  * @param {Chess} game the Chess object representing the state of the board
  */
-function boardSetUp(board, game, continuation, boardState){
+function boardSetUp(board, game, continuation, boardState, onPromotion){
     
     let $status = $('#status')
     let $fen = $('#fen')
@@ -23,9 +23,24 @@ function boardSetUp(board, game, continuation, boardState){
     }
 
     function onDrop (source, target) {
+        const piece = game.get(source)
+        let promotion ='q'
+        const [file, rank] = target.split("")
+        if(onPromotion!==undefined&&piece.type==game.PAWN&&(rank=='8'||rank=='1')){
+            boardState.promotionInProgress = true;
+            boardState.promotionMove = {from: source, to:target, promotion:null}
+            const fileNumber = file.charCodeAt(0)-97
+            if(piece.color==game.WHITE){
+                promotion=onPromotion(true, fileNumber, rank)
+            }else{
+                promotion=onPromotion(false, fileNumber, rank)
+            }
+            board.move(source+"-"+target)
+            return null;
+        }
+        
         let move = addMove({from: source,to: target, promotion: 'q' }, game, boardState)
         if(move==null) return "snapback"
-        
         updateStatus()     
         updateProgress(boardState,continuation,move)
         updateScoreSheet(boardState, move, game)

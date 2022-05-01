@@ -6,8 +6,8 @@
  */
 const getGameData = function getGameData(req, res){
     const testData = {
-        fen: "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
-        continuation: "Nf6 O-O Nxe4 d4 Nd6 Bxc6 dxc6 dxe5 Nf5 Qxd8+"
+        fen: "rn1qkbnr/pP1b1ppp/4p3/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 5",
+        continuation: "O-O Nxe4 d4 Nd6 Bxc6 dxc6 dxe5 Nf5 Qxd8+"
     }
     res.status(200)
     res.json(testData)
