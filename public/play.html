@@ -34,20 +34,25 @@
     <script src="javascript/gameVariations.js"></script>
     <script src="javascript/timer.js"></script>
     <script>
+        let boardState = null
+        let board = null
+        let game = null
+        let gameData = null
         const startGame = async function startGame(){
-            let gameData = null
 
             const getGameData = async function fetchGameData(){
-                gameData = await fetch('/play/game_data')
+                const gameData = await fetch('/play/game_data')
                 if(gameData.status=='200'){
-                    gameData = await gameData.json()
+                   return await gameData.json()
                 }
             }
-            await getGameData()
-            let board = Chessboard('myBoard');
-            let game = new Chess(gameData.fen);
+            gameData = await getGameData()
+            const continuation = gameData.continuation.split(" ")
+
+            board = Chessboard('myBoard');
+            game = new Chess(gameData.fen);
             let variation = new Variation(0, game.fen())
-            let boardState={
+            boardState={
                 currentVariation:variation,
                 mainVariation:variation,
                 currentPly:0,
@@ -64,8 +69,9 @@
                 div.style = "display: none;"
                 let move = boardState.promotionMove
                 move.promotion = type
-                addMove(move,game, boardState)
-                updateStatus()
+                move = addMove(move,game, boardState)
+                updateScoreSheet(boardState,move, game)
+                boardSetUp(board, game, continuation, boardState, displayPromotionPopup)
             }
             const displayPromotionPopup = function displayPromotionPopup(white, fileNumber, rank){
                 const peiceImageNames = ['wQ.png','wN.png','wR.png','wB.png', 'bQ.png', 'bN.png','bR.png','bB.png']
@@ -89,7 +95,7 @@
                 
             }
             
-            boardSetUp(board, game, gameData.continuation.split(" "), boardState, displayPromotionPopup);
+            boardSetUp(board, game, continuation, boardState, displayPromotionPopup);
             countdown(10000, 1000, "timer")
         }
         startGame()
