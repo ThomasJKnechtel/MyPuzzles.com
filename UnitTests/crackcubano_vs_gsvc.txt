@@ -1,0 +1,23 @@
+[Event "Rated Blitz game"]
+[Site "https://lichess.org/boJBhW9n"]
+[Date "2022.05.02"]
+[White "crackcubano"]
+[Black "gsvc"]
+[Result "0-1"]
+[UTCDate "2022.05.02"]
+[UTCTime "00:31:24"]
+[WhiteElo "2708"]
+[BlackElo "2819"]
+[WhiteRatingDiff "-4"]
+[BlackRatingDiff "+4"]
+[WhiteTitle "GM"]
+[BlackTitle "IM"]
+[Variant "Standard"]
+[TimeControl "180+0"]
+[ECO "A13"]
+[Opening "English Opening: Agincourt Defense"]
+[Termination "Time forfeit"]
+
+1. Nf3 d5 2. c4 e6 3. g3 dxc4 4. Qa4+ Nd7 5. Qxc4 a6 6. Qb3 b5 7. Bg2 Bb7 8. d4 c5 9. O-O Ngf6 10. a4 b4 11. a5 Rc8 12. Nbd2 Be7 13. Rd1 O-O 14. Nc4 Bd5 15. Nfe5 Bxg2 16. Kxg2 Qc7 17. Bf4 Nd5 18. Nxd7 Qxd7 19. dxc5 Rxc5 20. Nb6 Nxf4+ 21. gxf4 Qc7 22. Nd7 Qxf4 23. Nxc5 Bxc5 24. Qf3 Qh4 25. Rac1 Be7 26. b3 Qg5+ 27. Kh1 Qxa5 28. Ra1 Qb5 29. Qd3 Qb6 30. f3 a5 31. Rac1 Bf6 32. Rc4 g6 33. Rdc1 Kg7 34. Qe4 Qf2 35. Rc7 Rd8 36. Rg1 Qb6 37. Rgc1 Rd4 38. Qb7 Qxb7 39. Rxb7 Be5 40. Rc5 Bf4 41. Rxa5 Rd2 42. Raa7 g5 43. Rxf7+ Kg6 44. Rg7+ Kf6 45. Raf7+ Ke5 46. Rxh7 Rxe2 47. Rb7 Re1+ 48. Kg2 Re2+ 49. Kf1 Rc2 50. Rxb4 Bxh2 51. Re4+ Kf5 52. Re2 Rc1+ 53. Re1 Bf4 54. Rxc1 Bxc1 55. Ke2 Ba3 56. Rb7 Ke5 57. Kd3 Kd5 58. Ke2 Kc6 59. Rg7 Bc1 60. Kd3 Bf4 61. Ke4 Kd6 62. Rg6 Bd2 63. b4 Bxb4 64. Rxg5 Bc3 65. Rg6 Ke7 66. Rxe6+ Kxe6 67. f4 Bf6 68. f5+ Kf7 69. Kf3 Ke7 70. Ke2 Kd6 71. Kf3 Kd5 72. Ke2 Ke5 73. Kf1 Ke4 74. Ke2 Kf4 75. Kf1 Kg4 76. Ke2 Kg5 77. Kf1 Kf4 78. Ke2 Ke4 79. Kf1 Kf3 80. Ke1 Ke3 81. Kf1 Kd3 82. Ke1 Ke4 83. Kf1 Kf4 84. Ke1 Kg3 85. Kf1 Kf3 86. Ke1 Kg2 0-1
+
+
