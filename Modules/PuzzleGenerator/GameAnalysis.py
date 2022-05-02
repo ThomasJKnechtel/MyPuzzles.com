@@ -4,13 +4,13 @@ import chess.engine as engine
 
 class GameAnalysis:
 
-    def __init__(self, board: chess.Board) -> None:
+    def __init__(self, board: chess.Board, hash:int, threads: int) -> None:
         self.board = board
         self.previous_cp = 0
         self.info = None
         self.engine = engine.SimpleEngine.popen_uci(r"C:\Users\Thomas\OneDrive\JS Files\stockfish-9-win\Windows\stockfish_9_x64.exe")
-        self.engine.configure({"Threads":4})
-        self.engine.configure({"hash":16})
+        self.engine.configure({"Threads":threads})
+        self.engine.configure({"hash":hash})
         
     def getAnalysis(self, topMoveCount: int):
         """Updates the objects info object with data from engine"""

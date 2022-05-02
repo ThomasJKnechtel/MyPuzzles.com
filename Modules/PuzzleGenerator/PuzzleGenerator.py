@@ -19,7 +19,7 @@ def analyseGameMeasurements(fileOutput: str)->None:
     sums = (0,0,0)
     count = 0
     for game in games:
-        gameAnalysis = GameAnalysis(game.board())
+        gameAnalysis = GameAnalysis(game.board(), 16,2)
         for move in game.mainline_moves():
             startTime = time.time_ns()
             gameAnalysis.updateBoard(move)
@@ -39,4 +39,4 @@ def analyseGameMeasurements(fileOutput: str)->None:
         file.writelines(movePerformance)
         file.write("Averages:\n")
         file.write(str(sums[0]/count)+" "+str(sums[1]/count)+" "+str(sums[2]/count)+"\n")
-analyseGameMeasurements("Measurements\Engine_Performance_2")
+analyseGameMeasurements("Measurements\Engine_Performance_4")
