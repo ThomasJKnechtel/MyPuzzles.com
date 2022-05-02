@@ -14,7 +14,7 @@ class GameAnalysis:
         
     def getAnalysis(self, topMoveCount: int):
         """Updates the objects info object with data from engine"""
-        self.info = self.engine.analyse(self.board, engine.Limit(depth=12),multipv=topMoveCount)
+        self.info = self.engine.analyse(self.board, engine.Limit(depth=12),multipv=topMoveCount, info=engine.Info.ALL)
     def updateBoard(self, move: str)->bool:
         """Update board position with move if legal"""
         if(self.board.is_legal(move)):
