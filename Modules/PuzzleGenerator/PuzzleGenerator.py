@@ -45,31 +45,31 @@ def analyseGameMeasurements(fileOutput: str)->None:
         file.write("Averages:\n")
         file.write(str(sums[0]/count)+" "+str(sums[1]/count)+" "+str(sums[2]/count)+"\n")
 
-def analyseGames()->None:
+def analyseGame(game: Game)->list[list[str, str]]:
     puzzles = [] 
-    games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+"UnitTests/crackcubano_vs_gsvc.txt")
-    gameAnalysis = None
-    for game in games:
-        gameAnalysis = GameAnalysis(game.board(), 16,4)
-        count = 1
-        for move in game.mainline_moves():
-            if not gameAnalysis.updateBoard(move): exit(1)
-            gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
-            if gameAnalysis.isWinning(0):
-                continuation = []
+    gameAnalysis = GameAnalysis(game.board(), 16,4)
+    for move in game.mainline_moves():
+        if not gameAnalysis.updateBoard(move): exit(1)
+        gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
+        if gameAnalysis.isWinning(0):
+            continuation = []
+            gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
+            fen = gameAnalysis.board.fen()
+            turn = gameAnalysis.board.turn
+            while gameAnalysis.isOnlyMove():
+                move = gameAnalysis.info[0]["pv"][0]
+                if not gameAnalysis.updateBoard(move): exit(1)
+                continuation.append(str(move))
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
-                fen = gameAnalysis.board.fen()
-                turn = gameAnalysis.board.turn
-                while gameAnalysis.isOnlyMove():
-                    if not gameAnalysis.updateBoard(gameAnalysis.info[0]["pv"][0]): exit(1)
-                    continuation.append(str(move))
-                    gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
-                if(len(continuation)>0):
-                    puzzles.append(continuation)        
-                    gameAnalysis.board.set_board_fen(fen.split(" ")[0])
-                    gameAnalysis.board.turn=turn
+            if(len(continuation)>0): 
+                puzzles.append([continuation, fen])  
+                gameAnalysis.board.set_board_fen(fen.split(" ")[0])
+                gameAnalysis.board.turn=turn
     gameAnalysis.stopEngine()
     return puzzles
 
-    
-print(str(analyseGames()))
+def analyseGames():
+    games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+"UnitTests/crackcubano_vs_gsvc.txt")
+    for game in games:
+        print(str(analyseGame(game)))
+analyseGames()
