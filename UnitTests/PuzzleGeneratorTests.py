@@ -8,6 +8,7 @@ sys.path.insert(1, dotenv_values(".env")["WEBSITE_PATH"]+"/Modules/PuzzleGenerat
 from GameAnalysis import GameAnalysis
 
 class TestAnalysis(unittest.TestCase):
+    """Unit Tests for GameAnalysis object"""
     def setUp(self) -> None:
         self.gameAnalysis = GameAnalysis(None, 16, 4)
     def test_updateBoard(self):
