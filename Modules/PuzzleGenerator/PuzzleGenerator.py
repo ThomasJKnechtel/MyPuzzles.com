@@ -1,10 +1,9 @@
-from ast import Raise
-from ctypes import sizeof
-from chess import Move
 from chess.pgn import read_game, Game, GameNode
 from dotenv import dotenv_values
 import chess.engine as engine
+import ssl
 import time
+import urllib.request
 from GameAnalysis import GameAnalysis
 def getGames(fileName: str)->list[Game]:
     """
@@ -46,30 +45,40 @@ def analyseGameMeasurements(fileOutput: str)->None:
         file.write(str(sums[0]/count)+" "+str(sums[1]/count)+" "+str(sums[2]/count)+"\n")
 
 def analyseGame(game: Game)->list[list[str, str]]:
+    """Generates puzzles for a game
+    >>>analyseGame(getGames("game"))
+    [[['d8d5'], '3r4/2R2pkp/1q2pbp1/p7/1p2Q3/1P3P2/4P2P/2R4K b - - 9 37'], [['b4e4'], '8/7R/4p3/4k1p1/1R6/1P3P2/2r4b/5K2 w - - 0 52'], ... 
+    ... [['h7f7'], '8/7R/4p3/5kp1/4R3/1P3P2/2r4b/5K2 w - - 3 53']]]"""
     puzzles = [] 
     gameAnalysis = GameAnalysis(game.board(), 16,4)
     for move in game.mainline_moves():
-        if not gameAnalysis.updateBoard(move): exit(1)
+        if not gameAnalysis.updateBoard(move): exit(1)  #move is invalid so exit
         gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
         if gameAnalysis.isWinning(0):
             continuation = []
             gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
-            fen = gameAnalysis.board.fen()
+            fen = gameAnalysis.board.fen()  ##set location and turn to return to
             turn = gameAnalysis.board.turn
             while gameAnalysis.isOnlyMove():
                 move = gameAnalysis.info[0]["pv"][0]
                 if not gameAnalysis.updateBoard(move): exit(1)
-                continuation.append(str(move))
+                continuation.append(str(move))  
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             if(len(continuation)>0): 
                 puzzles.append([continuation, fen])  
                 gameAnalysis.board.set_board_fen(fen.split(" ")[0])
-                gameAnalysis.board.turn=turn
+                gameAnalysis.board.turn=turn   ##return to mainline
     gameAnalysis.stopEngine()
     return puzzles
 
-def analyseGames():
-    games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+"UnitTests/crackcubano_vs_gsvc.txt")
+def analyseGames(fileName: str):
+    """analyze games for puzzles"""
+    games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+fileName) #path stored in enviromental variable
     for game in games:
         print(str(analyseGame(game)))
-analyseGames()
+def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, endDate=None):
+    """Requested url format: https://lichess.org/api/games/user/chessiandoceo?vs=jdrc&rated=true&analysed=false&tags=true&clocks=false&evals=false&opening=false&max=8&since=1651377600000&until=1651723200000&perfType=ultraBullet%2Cbullet%2Cblitz%2Crapid%2Cclassical%2Ccorrespondence"""
+    ssl._create_default_https_context=ssl._create_unverified_context
+    url="https://lichess.org/api/games/user/{p}?vs={o}&rated=true&tags=true&clocks=false&evals=false&opening=false&max={n}&since={sd}&until={ed}&perfType={gt}".format(p = player, o=oppoent, n=nGames, gt=gameTypes, sd=startDate, ed=endDate)
+    data =urllib.request.urlretrieve(url, "Modules/PuzzleGenerator/gamePNGs.png")
+saveGames("chessiandoceo","jdrc", 2, gameTypes="2Cblitz"  )
