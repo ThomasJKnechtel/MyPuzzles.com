@@ -1,4 +1,5 @@
 import chess.pgn
+import chess.engine as engine
 import time
 from GameAnalysis import GameAnalysis
 def getGames(fileName: str)->list:
@@ -19,11 +20,11 @@ def analyseGameMeasurements(fileOutput: str)->None:
     sums = (0,0,0)
     count = 0
     for game in games:
-        gameAnalysis = GameAnalysis(game.board(), 16,2)
+        gameAnalysis = GameAnalysis(game.board(), 16,4)
         for move in game.mainline_moves():
             startTime = time.time_ns()
             gameAnalysis.updateBoard(move)
-            gameAnalysis.getAnalysis(1)
+            gameAnalysis.getAnalysis(1,engine.INFO_ALL)
             endTime = time.time_ns()
 
             count+=1
@@ -39,4 +40,16 @@ def analyseGameMeasurements(fileOutput: str)->None:
         file.writelines(movePerformance)
         file.write("Averages:\n")
         file.write(str(sums[0]/count)+" "+str(sums[1]/count)+" "+str(sums[2]/count)+"\n")
-analyseGameMeasurements("Measurements\Engine_Performance_4")
+
+def testIsWinning()->None:
+    games = getGames(r"C:\MyPuzzles\MyPuzzles.com\UnitTests\crackcubano_vs_gsvc.txt")
+    gameAnalysis = None
+    for game in games:
+        gameAnalysis = GameAnalysis(game.board(), 16,4)
+        count = 1
+        for move in game.mainline_moves():
+            gameAnalysis.updateBoard(move)
+            gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
+            print(str(count)+" "+str(gameAnalysis.isWinning(0)))
+    gameAnalysis.stopEngine()
+testIsWinning()

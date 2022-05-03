@@ -1,1 +1,4 @@
 /node_modules
+/Modules/PuzzleGenerator/__pycache__
+/.env
+/.venv

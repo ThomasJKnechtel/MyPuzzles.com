@@ -1,0 +1,18 @@
+[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2014.04.08"]
+[Round "?"]
+[White "smittieD"]
+[Black "pao01"]
+[Result "*"]
+[SetUp "1"]
+[FEN "4kbnr/pp2p1pp/1q1rB3/8/6P1/4QP2/P2B1K1P/3R3R w k - 0 1"]
+[FirstMove "20w"]
+[FULL "20. Rhe1 Rxe6 21. Qxb6 Rxb6"]
+[MOVES "2"]
+[PlyCount "4"]
+[PUZZLE_TYPE "material"]
+[START_SCORE "-3.98"]
+[START_SCORE_DIFFERENCE "-5.73"]
+
+1. Rhe1 Rxe6 2. Qxb6 Rxb6 *
