@@ -1,10 +1,14 @@
+from datetime import date, datetime
+from typing import Tuple
 from chess.pgn import read_game, Game, GameNode
 from dotenv import dotenv_values
 import chess.engine as engine
 import ssl
 import time
 import urllib.request
+import pyodbc
 from GameAnalysis import GameAnalysis
+
 def getGames(fileName: str)->list[Game]:
     """
     Creates game objects for each pgn in file
@@ -44,7 +48,7 @@ def analyseGameMeasurements(fileOutput: str)->None:
         file.write("Averages:\n")
         file.write(str(sums[0]/count)+" "+str(sums[1]/count)+" "+str(sums[2]/count)+"\n")
 
-def analyseGame(game: Game)->list[list[str, str]]:
+def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
     """Generates puzzles for a game
     >>>analyseGame(getGames("game"))
     [[['d8d5'], '3r4/2R2pkp/1q2pbp1/p7/1p2Q3/1P3P2/4P2P/2R4K b - - 9 37'], [['b4e4'], '8/7R/4p3/4k1p1/1R6/1P3P2/2r4b/5K2 w - - 0 52'], ... 
@@ -55,17 +59,17 @@ def analyseGame(game: Game)->list[list[str, str]]:
         if not gameAnalysis.updateBoard(move): exit(1)  #move is invalid so exit
         gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
         if gameAnalysis.isWinning(0):
-            continuation = []
+            continuation = ""
             gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             fen = gameAnalysis.board.fen()  ##set location and turn to return to
             turn = gameAnalysis.board.turn
             while gameAnalysis.isOnlyMove():
                 move = gameAnalysis.info[0]["pv"][0]
                 if not gameAnalysis.updateBoard(move): exit(1)
-                continuation.append(str(move))  
+                continuation+=str(move)+" "
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             if(len(continuation)>0): 
-                puzzles.append([continuation, fen])  
+                puzzles.append((game.headers["White"], game.headers["Black"], datetime.strptime(game.headers["Date"],r'%Y.%m.%d'), fen,continuation, game.headers["Event"],0,0, 111))  
                 gameAnalysis.board.set_board_fen(fen.split(" ")[0])
                 gameAnalysis.board.turn=turn   ##return to mainline
     gameAnalysis.stopEngine()
@@ -73,12 +77,24 @@ def analyseGame(game: Game)->list[list[str, str]]:
 
 def analyseGames(fileName: str):
     """analyze games for puzzles"""
+    puzzles = [] 
     games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+fileName) #path stored in enviromental variable
     for game in games:
-        print(str(analyseGame(game)))
+        puzzles+=analyseGame(game)
+    if len(puzzles)>0:
+        updateDataBase(puzzles)
+    
 def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, endDate=None):
-    """Requested url format: https://lichess.org/api/games/user/chessiandoceo?vs=jdrc&rated=true&analysed=false&tags=true&clocks=false&evals=false&opening=false&max=8&since=1651377600000&until=1651723200000&perfType=ultraBullet%2Cbullet%2Cblitz%2Crapid%2Cclassical%2Ccorrespondence"""
+    """saves pngs to Modules/PuzzleGenerator/gamePNGs.png.
+     Request url format: https://lichess.org/api/games/user/chessiandoceo?vs=jdrc&rated=true&analysed=false&tags=true&clocks=false&evals=false&opening=false&max=8&since=1651377600000&until=1651723200000&perfType=ultraBullet%2Cbullet%2Cblitz%2Crapid%2Cclassical%2Ccorrespondence"""
     ssl._create_default_https_context=ssl._create_unverified_context
     url="https://lichess.org/api/games/user/{p}?vs={o}&rated=true&tags=true&clocks=false&evals=false&opening=false&max={n}&since={sd}&until={ed}&perfType={gt}".format(p = player, o=oppoent, n=nGames, gt=gameTypes, sd=startDate, ed=endDate)
     data =urllib.request.urlretrieve(url, "Modules/PuzzleGenerator/gamePNGs.png")
-saveGames("chessiandoceo","jdrc", 2, gameTypes="2Cblitz"  )
+def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,])->None:
+    cnxn = pyodbc.connect('DSN=WebsiteConnection;Trusted_Connection=yes;')
+    cursor = cnxn.cursor()
+    cursor.executemany("insert into [MyPuzzles.com].[dbo].[puzzles](white, black, date, fen, continuation, event, success_rate, attempts, user_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", puzzles)
+    cnxn.commit()
+    print("finished")
+
+analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")
