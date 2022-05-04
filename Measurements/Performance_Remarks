@@ -1,0 +1,21 @@
+Overview: Remarks about the performance of stockfish 12 on Intel i7-3820QM 2.7GHz, when number of threads, hash size and number of lines to calculate are changed.
+
+2 Threads vs. 4 Threads (Engine_Performance vs. Engine_Performance_4):
+    Threads     Average Nodes   Average nps     Average Response Time (ns)
+    2           67 634          3 575 000       20 534 600
+    4           102 879         6 189 637       12 435 387
+16Mb Hash vs. 32Mb Hash (Engine_Performance vs. Engine_Performance_3)
+    Hash     Average Nodes   Average nps     Average Response Time (ns)
+    16       102 879         6 189 637       12 435 387
+    32       100 621         6 207 982       18 227 568
+1 Line vs. 2 Lines (Engine_Performance vs. Engine_Performance_2)
+    Lines   Average Nodes   Average nps      Average Response Time (ns)
+    1       102 879         6 189 637        12 435 387
+    2       171 703         6 884 839        29 417 000
+
+Uncertainty: nps and response time is dependent on the cache, which is not accounted for. The response time is also subject to interference from other processes.
+
+Conclusions: 
+    1. Increasing the number of threads signicantly improved performance
+    2. A 32 Mb hash did not significantly improve nps but it did signicantly increase response time
+    3. Increasing the number of lines to calculate had a significant impact on the number of nodes to calculate as well as response time
