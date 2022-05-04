@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from distutils.log import error
 from typing import Tuple
 from chess.pgn import read_game, Game, GameNode
 from dotenv import dotenv_values
@@ -13,7 +14,9 @@ def getGames(fileName: str)->list[Game]:
     """
     Creates game objects for each pgn in file
     """
-    pgnFile=open(fileName)
+    try: pgnFile=open(fileName)
+    except FileNotFoundError:
+        error("File not found")
     games = []
     game = read_game(pgnFile)
     while game is not None:
@@ -56,7 +59,9 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
     puzzles = [] 
     gameAnalysis = GameAnalysis(game.board(), 16,4)
     for move in game.mainline_moves():
-        if not gameAnalysis.updateBoard(move): exit(1)  #move is invalid so exit
+        if not gameAnalysis.updateBoard(move):
+            error("Invalid Move in png")
+            exit(1)
         gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
         if gameAnalysis.isWinning(0):
             continuation = ""
@@ -65,7 +70,9 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
             turn = gameAnalysis.board.turn
             while gameAnalysis.isOnlyMove():
                 move = gameAnalysis.info[0]["pv"][0]
-                if not gameAnalysis.updateBoard(move): exit(1)
+                if not gameAnalysis.updateBoard(move): 
+                    error("Invalid Move in png")
+                    exit(1)
                 continuation+=str(move)+" "
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             if(len(continuation)>0): 
@@ -76,7 +83,7 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
     return puzzles
 
 def analyseGames(fileName: str):
-    """analyze games for puzzles"""
+    """analyze games for puzzles and updates database"""
     puzzles = [] 
     games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+fileName) #path stored in enviromental variable
     for game in games:
@@ -90,10 +97,18 @@ def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, en
     ssl._create_default_https_context=ssl._create_unverified_context
     url="https://lichess.org/api/games/user/{p}?vs={o}&rated=true&tags=true&clocks=false&evals=false&opening=false&max={n}&since={sd}&until={ed}&perfType={gt}".format(p = player, o=oppoent, n=nGames, gt=gameTypes, sd=startDate, ed=endDate)
     data =urllib.request.urlretrieve(url, "Modules/PuzzleGenerator/gamePNGs.png")
-def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,])->None:
+
+
+def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])->None:
+    """updates the MyPuzzles.puzzles table with puzzles.
+    >>>game = Game("gamePNG.png:)
+    >>>updateDatabase(analyseGame(game))
+    """
     cnxn = pyodbc.connect('DSN=WebsiteConnection;Trusted_Connection=yes;')
     cursor = cnxn.cursor()
-    cursor.executemany("insert into [MyPuzzles.com].[dbo].[puzzles](white, black, date, fen, continuation, event, success_rate, attempts, user_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", puzzles)
+    try: cursor.executemany("insert into [MyPuzzles.com].[dbo].[puzzles](white, black, date, fen, continuation, event, success_rate, attempts, user_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", puzzles)
+    except pyodbc.Error as ex:
+        error(ex)
     cnxn.commit()
     print("finished")
 
