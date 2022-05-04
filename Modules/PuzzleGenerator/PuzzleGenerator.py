@@ -7,6 +7,7 @@ import chess.engine as engine
 import ssl
 import time
 import urllib.request
+import urllib.error
 import pyodbc
 from GameAnalysis import GameAnalysis
 
@@ -17,6 +18,7 @@ def getGames(fileName: str)->list[Game]:
     try: pgnFile=open(fileName)
     except FileNotFoundError:
         error("File not found")
+        exit(1)
     games = []
     game = read_game(pgnFile)
     while game is not None:
@@ -94,10 +96,14 @@ def analyseGames(fileName: str):
 def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, endDate=None):
     """saves pngs to Modules/PuzzleGenerator/gamePNGs.png.
      Request url format: https://lichess.org/api/games/user/chessiandoceo?vs=jdrc&rated=true&analysed=false&tags=true&clocks=false&evals=false&opening=false&max=8&since=1651377600000&until=1651723200000&perfType=ultraBullet%2Cbullet%2Cblitz%2Crapid%2Cclassical%2Ccorrespondence"""
-    ssl._create_default_https_context=ssl._create_unverified_context
-    url="https://lichess.org/api/games/user/{p}?vs={o}&rated=true&tags=true&clocks=false&evals=false&opening=false&max={n}&since={sd}&until={ed}&perfType={gt}".format(p = player, o=oppoent, n=nGames, gt=gameTypes, sd=startDate, ed=endDate)
-    data =urllib.request.urlretrieve(url, "Modules/PuzzleGenerator/gamePNGs.png")
-
+    try: 
+        ssl._create_default_https_context=ssl._create_unverified_context
+        url="https://lichess.org/api/games/user/{p}?vs={o}&rated=true&tags=true&clocks=false&evals=false&opening=false&max={n}&since={sd}&until={ed}&perfType={gt}".format(p = player, o=oppoent, n=nGames, gt=gameTypes, sd=startDate, ed=endDate)
+        print(url)
+        urllib.request.urlretrieve(url, "Modules/PuzzleGenerator/gamePNGs.png")
+    except urllib.error.HTTPError as ex:
+        error(ex)
+        exit(1)
 
 def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])->None:
     """updates the MyPuzzles.puzzles table with puzzles.
@@ -109,6 +115,7 @@ def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])
     try: cursor.executemany("insert into [MyPuzzles.com].[dbo].[puzzles](white, black, date, fen, continuation, event, success_rate, attempts, user_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", puzzles)
     except pyodbc.Error as ex:
         error(ex)
+        exit(1)
     cnxn.commit()
     print("finished")
 
