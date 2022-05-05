@@ -1,3 +1,6 @@
 .clicked{
     background-color: rgba(142, 200, 247);
 }
+.fen{
+    position: relative;
+}
