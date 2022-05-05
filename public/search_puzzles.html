@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html style="height: 100%;background-color: grey;">
+<html id="html" style="height: 100%;background-color: grey;">
     <header>
         <link rel="stylesheet" href="./css/form.css">
         <link rel="stylesheet" href="./css/search_puzzles.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
+        <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
         <script src="./javascript/search_puzzles.js"></script>
         <script src="./javascript/updateTable.js"></script>
     </header>
-    <body style="height: 100%;">
+    <body style="height: 100%; position: relative;">
         
         <div style="display: flex; justify-content: center; flex-wrap: wrap; height: 100%;">
             <h1>MyPuzzles.com</h1>
@@ -83,7 +86,7 @@
         
                 </table>
             </div>
-            <button>Play Casual</button><button>Play Rapid</button><button>Delete Puzzles</button>
+            
             
         </div>
         
