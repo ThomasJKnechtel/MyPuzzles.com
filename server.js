@@ -5,11 +5,11 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { getGameData } from './controllers/play.js'
+import {router} from './controllers/search_puzzles.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const server = express();
-
+let server = express();
 server.use(bodyParser.urlencoded({'extended':'true'}))
 server.use(bodyParser.json())
 server.use(express.static(__dirname+'/public'))
@@ -18,7 +18,7 @@ server.use(cookieParser())
 server.get("/play/game_data", getGameData)
 
 
-
+server.use('/search_puzzles.html',router)
 
 
 
