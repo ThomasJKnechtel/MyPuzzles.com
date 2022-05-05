@@ -4,6 +4,7 @@ from typing import Tuple
 from chess.pgn import read_game, Game, GameNode
 from dotenv import dotenv_values
 import chess.engine as engine
+from chess import Move
 import ssl
 import time
 import urllib.request
@@ -60,18 +61,28 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
     ... [['h7f7'], '8/7R/4p3/5kp1/4R3/1P3P2/2r4b/5K2 w - - 3 53']]]"""
     puzzles = [] 
     gameAnalysis = GameAnalysis(game.board(), 16,4)
+    continuation = ""
+    count = 0
     for move in game.mainline_moves():
+        
+        if continuation.split(' ')[count] == move.uci():  ## if correct continuation being played update board 
+                gameAnalysis.board.push(move)
+                count+=1
+                break
+        continuation=''
         if not gameAnalysis.updateBoard(move):
             error("Invalid Move in png")
             exit(1)
         gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
         if gameAnalysis.isWinning(0):
-            continuation = ""
+          
             gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             fen = gameAnalysis.board.fen()  ##set location and turn to return to
             turn = gameAnalysis.board.turn
+            correctContinuation = True
             while gameAnalysis.isOnlyMove():
                 move = gameAnalysis.info[0]["pv"][0]
+                count = 0 
                 if not gameAnalysis.updateBoard(move): 
                     error("Invalid Move in png")
                     exit(1)
