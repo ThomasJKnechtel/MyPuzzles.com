@@ -1,6 +1,7 @@
 
 import mssql from 'mssql'
 import {config} from 'dotenv'
+config('.env')
 /**
  * Gets a list of puzzles for user that matches the specified criteria
  * @param {Number} userid 
@@ -17,8 +18,8 @@ import {config} from 'dotenv'
  * @returns {list} a list of puzzles
  */
 const getUserPuzzles =async function getUserPuzzles(userid,player, opponent, event, startDate, endDate, notAttempted=false, numGames, primaryCriteria, secondaryCriteria, tertiararyCriteria){
-    config('.env')
-    let query = (numGames!=='')? 'SELECT TOP '+numGames+' * FROM puzzles WHERE user_id='+userid:  'SELECT * FROM puzzles WHERE user_id='+userid
+   
+    let query = (numGames!=='')? 'SELECT TOP '+numGames+' white, black, date, fen, continuation, event, success_rate, attempts FROM puzzles WHERE user_id='+userid:  'SELECT white, black, date, fen, continuation, event, success_rate, attempts FROM puzzles WHERE user_id='+userid
     let part1 = (player!=='')? ' AND (white=\''+player+'\' OR black=\''+player+'\')':''
     let part2 = (event!=='')?' AND event=\''+event+'\'':'' 
     let part3 = (startDate!=='')?' AND date>=\''+startDate+'\'':''
@@ -54,7 +55,7 @@ const getUserPuzzles =async function getUserPuzzles(userid,player, opponent, eve
         }
         try{
             result = await mssql.query(query)
-        }catch{
+        }catch(err){
             console.error(err)
             return "Bad Request"
         }
