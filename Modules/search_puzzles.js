@@ -19,7 +19,7 @@ config('.env')
  */
 const getUserPuzzles =async function getUserPuzzles(userid,player, opponent, event, startDate, endDate, notAttempted=false, numGames, primaryCriteria, secondaryCriteria, tertiararyCriteria){
    
-    let query = (numGames!=='')? 'SELECT TOP '+numGames+' white, black, date, fen, continuation, event, success_rate, attempts FROM puzzles WHERE user_id='+userid:  'SELECT white, black, date, fen, continuation, event, success_rate, attempts FROM puzzles WHERE user_id='+userid
+    let query = (numGames!=='')? 'SELECT TOP '+numGames+' puzzle_id, white, black, date, fen, continuation, event, success_rate, attempts FROM puzzles WHERE user_id='+userid:  'SELECT puzzle_id white, black, date, fen, continuation, event, success_rate, attempts FROM puzzles WHERE user_id='+userid
     let part1 = (player!=='')? ' AND (white=\''+player+'\' OR black=\''+player+'\')':''
     let part2 = (event!=='')?' AND event=\''+event+'\'':'' 
     let part3 = (startDate!=='')?' AND date>=\''+startDate+'\'':''

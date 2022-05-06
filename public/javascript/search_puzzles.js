@@ -3,21 +3,19 @@ const submitForm = async function submitForm(){
     formData.append('user_id','111')
     fetch('search_puzzles.html/search', {method:'POST', body:formData}).then(res => res.json()).then(puzzles =>{
         const handleDate = date => {return new Date(date).toDateString()}
-        updateTable('tbody',puzzles, {'ignore':{'continuation':true}, 'handle':{'date':handleDate}})
+        updateTable('tbody',puzzles, {'ignore':{'continuation':true,'puzzle_id':true}, 'handle':{'date':handleDate}})
         let fens = Array.from(document.getElementsByClassName('fen'))
+        let count = 0
         fens.map(element => {
             element.onmouseover=hover
             element.onmouseleave=leave
+            element.id = puzzles[count]['puzzle_id']
         });
     })
 }
-let fens = Array.from(document.getElementsByClassName('fen'))
-fens.map(element => {
-    element.onmouseover=hover
-    element.onmouseleave=leave
-});
+
 /**
- * 
+ * Update style of clicked row
  * @param {HTMLElement} elem 
  */
 const rowClicked = function rowClicked(elem){
@@ -43,9 +41,49 @@ const hover = function hover(elem){
     boardDiv.style.zIndex='1'
     this.innerHTML+=boardDiv.outerHTML
    
-    
-    const board = new ChessBoard('myBoard', fen)
+    const config = {
+        orientation: (fen.includes('w'))?"white":"black",
+        position: fen
+    }
+    new ChessBoard('myBoard', config)
 }
-const leave = function leave(elem){
+/**
+ * On mouse leaving event remove board
+ */
+const leave = function leave(){
     document.getElementById('myBoard').outerHTML=''
+}
+/**
+ * Handles request to play casual
+ */
+const playCasual = function playCasual(){
+    const clickedElements =Array.from(document.getElementsByClassName('clicked'))
+    let puzzles = [] 
+    /**
+     * Creates a puzzle object from table row
+     * @param {HTMLElement} element 
+     */
+    const createPuzzle= function(element){
+        const white = element.getElementsByClassName('white')[0].innerHTML
+        const black = element.getElementsByClassName('black')[0].innerHTML
+        const date = element.getElementsByClassName('date')[0].innerHTML
+        const fen = element.getElementsByClassName('fen')[0].innerHTML
+        const puzzle_id = element.getElementsByClassName('fen')[0].id
+        const event = element.getElementsByClassName('event')[0].innerHTML
+        const success_rate = element.getElementsByClassName('success_rate')[0].innerHTML
+        const attempts = element.getElementsByClassName('attempts')[0].innerHTML
+        return puzzle = { 'white': white, 'black':black,'date':date,'fen':fen, 'puzzle_id': parseInt(puzzle_id), 'event':event, 'success_rate':parseFloat(success_rate), 'attempts':parseInt(attempts)}
+    }
+    if(clickedElements.length>0){
+        clickedElements.map(element =>{
+            puzzles.push(createPuzzle(element))
+         })
+    }else{
+        const rows = Array.from(document.getElementsByClassName('row'))
+        rows.map(row => {
+            puzzles.push(createPuzzle(row))
+        })
+    }
+    sessionStorage.setItem('puzzles', JSON.stringify(puzzles))
+    sessionStorage.setItem('mode','casual')
 }

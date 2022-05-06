@@ -9,7 +9,7 @@
         <script src="./javascript/search_puzzles.js"></script>
         <script src="./javascript/updateTable.js"></script>
     </header>
-    <body style="height: 100%; position: relative;">
+    <body style="height: 100%;">
         
         <div style="display: flex; justify-content: center; flex-wrap: wrap; height: 100%;">
             <h1>MyPuzzles.com</h1>
@@ -85,9 +85,12 @@
                     
         
                 </table>
+             
             </div>
             
-            
+            <div style="max-width: 1400px; width: 100%; display: flex; justify-content: center;">
+                <button class="button" onclick="playCasual()">Casual</button><button class="button" onclick="play3Minute()">3 Minute</button><button class="button" onclick="play5Minute()">5 Minute</button>
+            </div>
         </div>
         
     </body>
