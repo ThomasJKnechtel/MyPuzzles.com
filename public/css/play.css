@@ -2,3 +2,8 @@
     font-size: 25px;
 
 }
+.timerLabel{
+    font-size: 20px;
+    background-color: rgba(236, 236, 236, 0.349);
+    margin: 3px;
+}

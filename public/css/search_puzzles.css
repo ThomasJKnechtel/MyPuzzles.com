@@ -4,3 +4,7 @@
 .fen{
     position: relative;
 }
+.button{
+    height: fit-content;
+    font-size: x-large;
+}

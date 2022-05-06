@@ -12,7 +12,10 @@
             <div style="width: 130px; height: 80px; display: flex; justify-content: center;">
                 <i class="gg-stopwatch" style=" transform: scale(var(--ggs,3)); width: 30px; height: 30px;"></i>
             </div>
-            <label id="timer" style="font-size: 20px;"></label>
+            <label style="background-color: rgb(255, 255, 255); border-width: 3px; border-style:ridge; border-color: rgb(255, 255, 255);">
+                <label id="timerSec1" class="timerLabel"></label>:<label id="timerSec2" class="timerLabel"></label>:<label id="timerSec3" class="timerLabel"></label>
+            </label>
+            
         </div>
         
         
@@ -96,7 +99,7 @@
             }
             
             boardSetUp(board, game, continuation, boardState, displayPromotionPopup);
-            countdown(10000, 1000, "timer")
+            countdown(10000, 10)
         }
         startGame()
         
