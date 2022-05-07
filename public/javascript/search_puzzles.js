@@ -11,6 +11,7 @@ const submitForm = async function submitForm(){
             element.onmouseleave=leave
             element.id = puzzles[count]['puzzle_id']
             element.continuation = puzzles[count]['continuation']
+            count++
         });
     })
 }

@@ -2,13 +2,16 @@ let boardState = null
 let board = null
 let game = null
 let puzzle = null
+let size = 0
 /**
  * Gets Puzzle and updates puzzles started count
  * @returns Puzzle to play
  */
 const getPuzzle = function(){
     let count = parseInt(sessionStorage.getItem('count'))
-    const puzzle = JSON.parse(sessionStorage.getItem('puzzles'))[count]
+    const puzzles =  JSON.parse(sessionStorage.getItem('puzzles'))
+    const puzzle = puzzles[count]
+    size=puzzles.length
     count++
     sessionStorage.setItem('count',count)
     return puzzle
@@ -70,7 +73,7 @@ const startGame = async function startGame(){
 const giveUp = function(){
     window.loction.href='http://localhost:7500/search_puzzles.html'
 }
-const newPuzzle = function() { 
+const nextPuzzle = function() { 
     let puzzleResult = {}
     if(boardState.progress=="Solved"){
        puzzleResult['success']=true
@@ -79,6 +82,12 @@ const newPuzzle = function() {
     }
     let puzzleResults = sessionStorage.getItem('puzzle_results')
     puzzleResult[puzzle['puzzle_id']]=puzzleResult
+    sessionStorage.setItem('puzzle_results', puzzleResults)
+    if(count === size){
+        window.location.href='http://localhost:7500/search_puzzles.html'
+    }else{
+        window.location.reload()
+    }
 }
 
 startGame()
