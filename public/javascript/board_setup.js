@@ -157,10 +157,16 @@ function updateProgress(boardState, continuation, move){
     if(boardState.progress == "Solving"){
         if(boardState.currentVariation!=boardState.mainVariation){
             boardState.progress = "Failed"
+            endTime = Date.now()
+            clearInterval(timer)
         }else if(move.san!=continuation[boardState.currentPly-1]){
             boardState.progress="Failed"
+            endTime = Date.now()
+            clearInterval(timer)
         }else if(boardState.currentPly==continuation.length){
             boardState.progress="Passed"
+            endTime = Date.now()
+            clearInterval(timer)
             document.getElementById("pgnContainer").style.borderTopColor="Green"
         }
     }

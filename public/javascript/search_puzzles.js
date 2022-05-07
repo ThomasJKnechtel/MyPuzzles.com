@@ -91,4 +91,5 @@ const playCasual = function playCasual(){
     sessionStorage.setItem('mode','casual')
     sessionStorage.setItem('count',0)
     sessionStorage.setItem('puzzle_results',JSON.stringify({}))
+    window.location.href="http://localhost:7500/play.html"
 }

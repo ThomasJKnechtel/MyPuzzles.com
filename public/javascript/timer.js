@@ -1,4 +1,4 @@
-let countdown = async (countTime, timeIncrement)=>{
+let countdown = (countTime, timeIncrement)=>{
     let count = 0
     let timer = setInterval(()=>{
         count += timeIncrement
@@ -23,4 +23,5 @@ let countdown = async (countTime, timeIncrement)=>{
             clearInterval(timer)
         }
     }, timeIncrement)
+    return timer
 }

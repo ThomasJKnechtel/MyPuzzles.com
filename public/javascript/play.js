@@ -2,7 +2,10 @@ let boardState = null
 let board = null
 let game = null
 let puzzle = null
+let timer = null
 let size = 0
+let startTime = 0
+let endTime = 0
 /**
  * Gets Puzzle and updates puzzles started count
  * @returns Puzzle to play
@@ -68,22 +71,20 @@ const startGame = async function startGame(){
     }
     
     boardSetUp(board, game, continuation, boardState, displayPromotionPopup, boardState.orientation);
-    countdown(10000, 10)
+    timer = countdown(10000, 10)
 }
 const giveUp = function(){
     window.loction.href='http://localhost:7500/search_puzzles.html'
 }
 const nextPuzzle = function() { 
-    let puzzleResult = {}
-    if(boardState.progress=="Solved"){
-       puzzleResult['success']=true
-    }else{
-        puzzleResult['success']=false
+    let puzzleResult = {
+        "timeSpent":endTime-startTime,
+        "result":(boardState["progress"]==="Passed")?true:false
     }
-    let puzzleResults = sessionStorage.getItem('puzzle_results')
-    puzzleResult[puzzle['puzzle_id']]=puzzleResult
-    sessionStorage.setItem('puzzle_results', puzzleResults)
-    if(count === size){
+    let puzzleResults = JSON.parse(sessionStorage.getItem('puzzle_results'))
+    puzzleResults[puzzle['puzzle_id']]=puzzleResult
+    sessionStorage.setItem('puzzle_results', JSON.stringify(puzzleResults))
+    if(parseInt(sessionStorage.getItem('count')) === size){
         window.location.href='http://localhost:7500/search_puzzles.html'
     }else{
         window.location.reload()
@@ -91,3 +92,4 @@ const nextPuzzle = function() {
 }
 
 startGame()
+startTime = Date.now()
