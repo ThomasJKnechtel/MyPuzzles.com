@@ -10,6 +10,7 @@ const submitForm = async function submitForm(){
             element.onmouseover=hover
             element.onmouseleave=leave
             element.id = puzzles[count]['puzzle_id']
+            element.continuation = puzzles[count]['continuation']
         });
     })
 }
@@ -72,7 +73,8 @@ const playCasual = function playCasual(){
         const event = element.getElementsByClassName('event')[0].innerHTML
         const success_rate = element.getElementsByClassName('success_rate')[0].innerHTML
         const attempts = element.getElementsByClassName('attempts')[0].innerHTML
-        return puzzle = { 'white': white, 'black':black,'date':date,'fen':fen, 'puzzle_id': parseInt(puzzle_id), 'event':event, 'success_rate':parseFloat(success_rate), 'attempts':parseInt(attempts)}
+        const continuation = element.getElementsByClassName('fen')[0].continuation
+        return puzzle = { 'white': white, 'black':black,'date':date,'fen':fen, 'puzzle_id': parseInt(puzzle_id), 'event':event, 'continuation':continuation, 'success_rate':parseFloat(success_rate), 'attempts':parseInt(attempts)}
     }
     if(clickedElements.length>0){
         clickedElements.map(element =>{
@@ -86,4 +88,6 @@ const playCasual = function playCasual(){
     }
     sessionStorage.setItem('puzzles', JSON.stringify(puzzles))
     sessionStorage.setItem('mode','casual')
+    sessionStorage.setItem('count',0)
+    sessionStorage.setItem('puzzle_results',JSON.stringify({}))
 }

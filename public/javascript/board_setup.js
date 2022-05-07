@@ -11,7 +11,7 @@ function boardSetUp(board, game, continuation, boardState, onPromotion){
     let $fen = $('#fen')
     let $pgn = $('#pgn')
 
-    function onDragStart (source, piece, position, orientation) {
+    function onDragStart ( piece) {
         // do not pick up pieces if the game is over
         if (game.game_over()) return false
 
@@ -90,7 +90,7 @@ function boardSetUp(board, game, continuation, boardState, onPromotion){
     let config = {
         draggable: true,
         position: game.fen(),
-        orientation: (game.turn()==='w')?"White":"Black",
+        orientation: boardState.orientation,
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
@@ -118,7 +118,7 @@ function moveClicked(elem){
         }
     })
     game=new Chess( boardState.currentVariation.fens[ply-boardState.currentVariation.startingPly])
-    boardSetUp(board, game, gameData.continuation,boardState)
+    boardSetUp(board, game, puzzle.continuation,boardState, boardState.orientation)
 
 }
 function addMove(move, game, boardState){
