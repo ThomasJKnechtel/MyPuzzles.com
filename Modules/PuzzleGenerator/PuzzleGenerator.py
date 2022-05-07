@@ -65,7 +65,7 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
     count = 0
     for move in game.mainline_moves():
         
-        if continuation.split(' ')[count] == move.uci():  ## if correct continuation being played update board 
+        if continuation.split(' ')[count] == gameAnalysis.board.san(move):  ## if correct continuation being played update board 
                 gameAnalysis.board.push(move)
                 count+=1
                 break
@@ -79,14 +79,13 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
             gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             fen = gameAnalysis.board.fen()  ##set location and turn to return to
             turn = gameAnalysis.board.turn
-            correctContinuation = True
             while gameAnalysis.isOnlyMove():
-                move = gameAnalysis.info[0]["pv"][0]
+                move =gameAnalysis.info[0]["pv"][0]
                 count = 0 
+                continuation+=gameAnalysis.board.san(move)+" "
                 if not gameAnalysis.updateBoard(move): 
                     error("Invalid Move in png")
                     exit(1)
-                continuation+=str(move)+" "
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             if(len(continuation)>0): 
                 puzzles.append((game.headers["White"], game.headers["Black"], datetime.strptime(game.headers["Date"],r'%Y.%m.%d'), fen,continuation, game.headers["Event"],0,0, 111))  
