@@ -90,6 +90,7 @@ function boardSetUp(board, game, continuation, boardState, onPromotion){
     let config = {
         draggable: true,
         position: game.fen(),
+        orientation: (game.turn()==='w')?"White":"Black",
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
@@ -160,6 +161,7 @@ function updateProgress(boardState, continuation, move){
             boardState.progress="Failed"
         }else if(boardState.currentPly==continuation.length){
             boardState.progress="Passed"
+            document.getElementById("pgnContainer").style.borderTopColor="Green"
         }
     }
 }

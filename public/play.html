@@ -18,15 +18,15 @@
             
         </div>
         
-        
         <div style="width: 40%; position: relative;">
-            <div id="myBoard" style="width: 100%">
-               
-            </div>
+            <div id="myBoard" style="width: 100%"></div>
              <div id="promotionPopup"></div>
         </div>
-       
-        <div id="pgnContainer" style="width: 15%; border-style: solid; border-color: rgb(207, 207, 207); background-color: rgb(167, 167, 167);"></div>
+        <div style="width: 15%;display: flex; justify-content: center; flex-wrap: wrap;">
+            <div id="pgnContainer"></div>
+            <section><button class="button" onclick="giveUp()">Give Up</button><button class="button" onclick="nextPuzzle()">Next</button></section>
+        </div>
+        
     </div>
     
       
@@ -74,6 +74,7 @@
                 move.promotion = type
                 move = addMove(move,game, boardState)
                 updateScoreSheet(boardState,move, game)
+                updateProgress(boardState, continuation,move)
                 boardSetUp(board, game, continuation, boardState, displayPromotionPopup)
             }
             const displayPromotionPopup = function displayPromotionPopup(white, fileNumber, rank){
@@ -100,6 +101,9 @@
             
             boardSetUp(board, game, continuation, boardState, displayPromotionPopup);
             countdown(10000, 10)
+        }
+        const giveUp = function giveUp(){
+            window.loction.href='http://localhost:7500/search_puzzles.html'
         }
         startGame()
         
