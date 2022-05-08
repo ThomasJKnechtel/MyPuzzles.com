@@ -12,7 +12,7 @@ const calculateSuccessRate = function(puzzles){
         if(puzzle['result']===true) puzzleSuccess++
         total++
     })
-    return puzzleSuccess/total
+    return Math.round(puzzleSuccess/total*100)
 }
 /**
  * Calculates the longest streak for a list of puzzles
@@ -39,7 +39,7 @@ const calculateLongestStreak = function(puzzles){
  */
 const updateSessionStats = function(puzzles){
     document.getElementById("puzzlesAttempted").innerText = puzzles.length
-    document.getElementById("successRate").innerText = calculateSuccessRate(puzzles)
+    document.getElementById("successRate").innerText = calculateSuccessRate(puzzles)+'%'
     document.getElementById("longestStreak").innerText = calculateLongestStreak(puzzles)
 }
 /**
@@ -52,9 +52,9 @@ const createPuzzleElement = function(puzzleStats, puzzle, count){
     let puzzleElement = document.createElement('div')
     const date = new Date(puzzleStats['timeSpent'])
     const timeSpent = new Date(puzzleStats['timeSpent']).toUTCString().split(" ")[4]
-    if(puzzleStats['result'])puzzleElement.classList.add('passed')
-    else puzzleElement.classList.add('failed')
-    let innerHTML = `<label>Puzzle ${count}</label><div id="board${count}"></div><label>Time Spent: ${timeSpent}</label><label>Continuation:</label><label class="continuation">${puzzle.continuation}</label>`
+    puzzleElement.classList.add('puzzleContainer')
+    let classType = (puzzleStats['result'])?"passed":"failed"
+    let innerHTML = `<label class=${classType}>Puzzle ${count}</label><div id="board${count}" class="boardContainer"></div><label>Time Spent: ${timeSpent}</label><label>Continuation:</label><label class="continuation">${puzzle.continuation}</label>`
     puzzleElement.innerHTML = innerHTML
     return puzzleElement
 }
@@ -65,10 +65,21 @@ const createPuzzleElement = function(puzzleStats, puzzle, count){
  */
 const updatePuzzleStats = function(puzzlesStats, puzzles){
     let count = 0
+    let container = document.getElementById("puzzlesContainer")
+    container.innerHTML=''
     puzzlesStats.map(puzzleStats => {
         const elem = createPuzzleElement(puzzleStats, puzzles[count], count)
+        const fen = puzzles[count]['fen']
+        
+        container.innerHTML+=elem.outerHTML
+        
+        const config = {
+            orientation: (fen.includes('w'))?'white':'black',
+            position: fen,
+            showNotation: false
+        }
+        const board = new ChessBoard('board'+count, config)
         count++
-        document.getElementById("puzzleContainer").innerHTML+=elem.outerHTML
     })
 }
 updateSessionStats(Object.values(results))
