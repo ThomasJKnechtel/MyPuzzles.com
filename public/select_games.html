@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <link rel="stylesheet" href="./css/select_games.css">
+    </header>
+    <body>
+        <div class="container">
+            <h1 style="text-align: center; width: 100%;">Select Games</h1>
+            <form method="POST" enctype="application/x-www-form-urlencoded" action="getGames">
+                <section>
+                    <div>
+                        <label for="playerName">Player: </label><input type="text" name="playerName" maxlength="50">
+                    </div>
+                   <div>
+                        <label for="opponentName">Opponent: </label><input type="text" name="opponentName" maxlength="50">
+                   </div>
+                    
+                </section>
+                <section>
+                    <div>
+                        <label for="startDate">From: </label><input type="date" name="startDate">
+                    </div>
+                    <div>
+                        <label for="endDate">To: </label><input type="date" name="endDate">
+                    </div>
+                    
+                </section>
+                <fieldset name="Game Types">
+                    <legend>Game Types</legend>
+                    <label for="blitz">blitz: </label><input type="checkbox" name="blitz">
+                    <label for="bullet">bullet: </label><input type="checkbox" name="bullet">
+                    <label for="ultra-bullet">ultra-bullet: </label><input type="checkbox" name="ultra-bullet">
+                    <label for="rapid">rapid: </label><input type="checkbox" name="rapid">
+                    <label for="classical">classical: </label><input type="checkbox" name="clssical">
+                    <label for="correspondence">correspondence: </label><input type="checkbox" name="correspondence">
+                </fieldset>
+                <label for="numberGames">Number of Games: </label><input type="number" name="numberGames" max="20" min="1" value="10">
+                <input type="submit" value="Submit" name="submit" style="align-self: flex-end;">
+            </form>
+        </div>
+        
+    </body>
+</html>
