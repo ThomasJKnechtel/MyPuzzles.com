@@ -89,20 +89,19 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
                     exit(1)
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             if(len(continuation)>0): 
-                puzzles.append((game.headers["White"], game.headers["Black"], datetime.strptime(game.headers["Date"],r'%Y.%m.%d'), fen,continuation, game.headers["Event"],0,0, 111))  
+                puzzles.append({'white':game.headers["White"],'black': game.headers["Black"], 'date':game.headers["Date"],'fen': fen,'continuation':continuation,'event': game.headers["Event"],'attempts':0,'success_rate':0,'user_id': 111})  
                 gameAnalysis.board.set_board_fen(fen.split(" ")[0])
                 gameAnalysis.board.turn=turn   ##return to mainline
     gameAnalysis.stopEngine()
     return puzzles
 
 def analyseGames(fileName: str):
-    """analyze games for puzzles and updates database"""
+    """analyze games for puzzles and returns list of puzzles"""
     puzzles = [] 
     games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+fileName) #path stored in enviromental variable
     for game in games:
         puzzles+=analyseGame(game)
-    if len(puzzles)>0:
-        updateDataBase(puzzles)
+    return puzzles
     
 def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, endDate=None):
     """saves pngs to Modules/PuzzleGenerator/gamePNGs.png.
@@ -110,7 +109,6 @@ def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, en
     try: 
         ssl._create_default_https_context=ssl._create_unverified_context
         url="https://lichess.org/api/games/user/{p}?vs={o}&rated=true&tags=true&clocks=false&evals=false&opening=false&max={n}&since={sd}&until={ed}&perfType={gt}".format(p = player, o=oppoent, n=nGames, gt=gameTypes, sd=startDate, ed=endDate)
-        print(url)
         urllib.request.urlretrieve(url, "Modules/PuzzleGenerator/gamePNGs.png")
     except urllib.error.HTTPError as ex:
         error(ex)
@@ -128,18 +126,16 @@ def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])
         error(ex)
         exit(1)
     cnxn.commit()
-    print("finished")
-
 if __name__ == '__main__':
+    
     gamePerameters = json.loads(argv[1])
     values = list(gamePerameters.values())
     keys =list( gamePerameters.keys())
     gameTypes = ''
-    print(str(values))
     for i in range(len(values)):
         if(values[i]):
             gameTypes+=keys[i]+'%2C'
     
 
     saveGames(gamePerameters['playerName'], oppoent=gamePerameters['opponentName'], nGames=gamePerameters['numberGames'], gameTypes=gameTypes, startDate=gamePerameters['startDate'],endDate= gamePerameters['endDate'])
-    analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")
+    print(json.dumps(analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")))

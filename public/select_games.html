@@ -2,11 +2,12 @@
 <html>
     <header>
         <link rel="stylesheet" href="./css/select_games.css">
+        <script src='javascript/select_games.js'></script>
     </header>
     <body>
         <div class="container">
             <h1 style="text-align: center; width: 100%;">Select Games</h1>
-            <form method="POST" enctype="application/x-www-form-urlencoded" action="select_games.html/getGames">
+            <form id='gamePerameters'>
                 <section>
                     <div>
                         <label for="playerName">Player: </label><input type="text" name="playerName" maxlength="50">
@@ -35,7 +36,7 @@
                     <label for="correspondence">correspondence: </label><input type="checkbox" name="correspondence">
                 </fieldset>
                 <label for="numberGames">Number of Games: </label><input type="number" name="numberGames" max="20" min="1" value="10">
-                <input type="submit" value="Submit" name="submit" style="align-self: flex-end;">
+                <input type="button" value="Submit" onclick = "generatePuzzles()" style="align-self: flex-end;">
             </form>
         </div>
         
