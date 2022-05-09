@@ -2,6 +2,9 @@
 <html>
     <header>
         <link rel="stylesheet" href="./css/select_games.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
+        <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
         <script src='javascript/select_games.js'></script>
     </header>
     <body>
@@ -36,9 +39,29 @@
                     <label for="correspondence">correspondence: </label><input type="checkbox" name="correspondence">
                 </fieldset>
                 <label for="numberGames">Number of Games: </label><input type="number" name="numberGames" max="20" min="1" value="10">
-                <input type="button" value="Submit" onclick = "generatePuzzles()" style="align-self: flex-end;">
+                <input type="button" value="Submit" onclick = "generatePuzzles()">
             </form>
+            <div style="height:40%; max-width: 1440px; width: 100%; background-color: white; margin-top: 10px;">
+                <table id='puzzlesTable'>
+                    <colgroup>
+                        <col style="background-color: white;">
+                        <col style="background-color: rgb(235, 235, 255);">
+                        <col style="background-color: white;">
+                        <col style="background-color: rgb(235, 235, 255);">
+                        <col style="background-color: white;">
+                        <col style="background-color: rgb(235, 235, 255);">
+                    </colgroup>
+                    <tbody id='puzzleTableBody'>
+                        <tr><th>White</th><th>Black</th><th>Date</th><th>Event</th><th>FEN</th><th>Continuation</th></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <button onclick="save()">Save</button><button onclick="deletePuzzles()">Delete</button>
+            </div>
+            
         </div>
+       
         
     </body>
 </html>

@@ -1,5 +1,6 @@
-html{
+html, body{
     background-color: gray;
+    height: 100%;
 }
 h1{
     font-size: 40px;
@@ -19,6 +20,7 @@ input{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    height: 100%;
     
 }
 
@@ -38,4 +40,23 @@ fieldset{
     margin-top: 50px;
     margin-bottom: 50px;
     width: fit-content;
+}
+table{
+    width: 100%;
+}
+th{
+    background-color: rgb(205, 205, 255); 
+}
+.continuation{
+    background-color: black;
+    width: fit-content;
+}
+.continuation:hover{
+    background-color: transparent;
+}
+.clicked{
+    background-color: rgba(142, 200, 247);
+}
+td{
+    position: relative;
 }
