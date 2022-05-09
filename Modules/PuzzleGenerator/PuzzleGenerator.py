@@ -1,15 +1,16 @@
-from datetime import date, datetime
+from datetime import datetime
 from distutils.log import error
 from typing import Tuple
-from chess.pgn import read_game, Game, GameNode
+from chess.pgn import read_game, Game
 from dotenv import dotenv_values
 import chess.engine as engine
-from chess import Move
 import ssl
 import time
 import urllib.request
 import urllib.error
 import pyodbc
+import json
+from sys import argv
 from GameAnalysis import GameAnalysis
 
 def getGames(fileName: str)->list[Game]:
@@ -129,4 +130,16 @@ def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])
     cnxn.commit()
     print("finished")
 
-analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")
+if __name__ == '__main__':
+    gamePerameters = json.loads(argv[1])
+    values = list(gamePerameters.values())
+    keys =list( gamePerameters.keys())
+    gameTypes = ''
+    print(str(values))
+    for i in range(len(values)):
+        if(values[i]):
+            gameTypes+=keys[i]+'%2C'
+    
+
+    saveGames(gamePerameters['playerName'], oppoent=gamePerameters['opponentName'], nGames=gamePerameters['numberGames'], gameTypes=gameTypes, startDate=gamePerameters['startDate'],endDate= gamePerameters['endDate'])
+    analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")
