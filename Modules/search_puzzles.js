@@ -75,7 +75,6 @@ const getUserPuzzles =async function getUserPuzzles(userid,player, opponent, eve
     
     query+=part1+part2+part3+part4+part5+part6+sortPart
     const puzzles = await getPuzzles(query)
-    console.log(query)
     return puzzles
 }
 

@@ -1,8 +1,11 @@
-
+let puzzles = []
 const generatePuzzles = function(){
     const formData = new FormData(document.getElementById('gamePerameters'))
-    const puzzles = fetch('select_games.html/generatePuzzles', {method:'Post', body: formData}).then(response => {
-        if(response.status==200) response.json().then(json =>{updateTable(json, document.getElementById('puzzleTableBody'))})
+    fetch('select_games.html/generatePuzzles', {method:'Post', body: formData}).then(response => {
+        if(response.status==200) response.json().then(json =>{
+            updateTable(json, document.getElementById('puzzleTableBody'))
+            puzzles=json
+        })
         else if(response.status==503){
             alert('Service is temporarily unavailable')
             return null
@@ -22,7 +25,7 @@ const generatePuzzles = function(){
  */
 const addPuzzleToTable = function(puzzle, tableBody){
     if(puzzle!==undefined){
-        const innerHTML = '<tr onclick="clicked(this)"><td>'+puzzle['white']+'</td><td>'+puzzle['black']+'</td><td>'+puzzle['date']+'</td><td>'+puzzle['event']+'</td><td onmouseover="hover(this)" onmouseleave="leave(this)">'+puzzle['fen']+'</td><td><label class="continuation">'+puzzle['continuation']+'</label></td></tr>'
+        const innerHTML = '<tr class="row" class="row" onclick="clicked(this)"><td>'+puzzle['white']+'</td><td>'+puzzle['black']+'</td><td>'+puzzle['date']+'</td><td>'+puzzle['event']+'</td><td onmouseover="hover(this)" onmouseleave="leave(this)">'+puzzle['fen']+'</td><td><label class="continuation">'+puzzle['continuation']+'</label></td></tr>'
         tableBody.innerHTML+=innerHTML
     }
 }
@@ -33,7 +36,9 @@ const addPuzzleToTable = function(puzzle, tableBody){
  */
 const updateTable = function(puzzles, tableBody){
     if(puzzles!==undefined){
-        puzzles.map(puzzle => addPuzzleToTable(puzzle, tableBody))
+        puzzles.map(puzzle => {
+            addPuzzleToTable(puzzle, tableBody)
+        })
     }
 }
 /**
@@ -71,6 +76,45 @@ const hover = function(elem){
 /**
  * On mouse leaving event remove board
  */
- const leave = function leave(){
+ const leave = function(){
     document.getElementById('myBoard').outerHTML=''
+}
+/**
+ * Save puzzles
+ */
+const save = function(){
+    
+        let puzzlesToSend = []
+        const clicked = Array.from(document.getElementsByClassName('clicked'))
+        if(clicked.length>0){
+            clicked.map(puzzleElem => {
+                 const children =puzzleElem.children
+                 puzzle = {'white':children[0].innerText,'black':children[1].innerText, 'date':children[2].innerText, 'event':children[3].innerText, 'fen':children[4].innerText, 'continuation':children[5].getElementsByClassName('continuation')[0].innerText, 'success_rate':0, 'attempts':0}
+                 puzzlesToSend.push(puzzle)
+                 puzzleElem.outerHTML=''
+            })
+        }else{
+            const rows = Array.from(document.getElementsByClassName('row'))
+            rows.map(puzzleElem => {
+                const children =puzzleElem.children
+                puzzle = {'white':children[0].innerText,'black':children[1].innerText, 'date':children[2].innerText, 'event':children[3].innerText, 'fen':children[4].innerText, 'continuation':children[5].getElementsByClassName('continuation')[0].innerText, 'success_rate':0, 'attempts':0}
+                puzzlesToSend.push(puzzle)
+                puzzleElem.outerHTML=''
+           })
+        }
+        fetch('select_games.html/save',{method:'Post', body: JSON.stringify(puzzlesToSend), headers:{'Content-Type':'application/json'}}).then(response => {alert(response.statusText)})
+    
+    
+}
+const deletePuzzles = function(){
+    if(puzzles.length>0){
+        const clicked = Arrays.from(document.getElementsByClassName('clicked'))
+        if(clicked.length>0){
+            clicked.map(puzzleElem => {
+                puzzleElem.outerHTML=''
+            })
+        }else{
+            document.getElementById('puzzleTableBody').innerHTML="<tr><th>White</th><th>Black</th><th>Date</th><th>Event</th><th>FEN</th><th>Continuation</th></tr>"
+        }
+    }
 }
