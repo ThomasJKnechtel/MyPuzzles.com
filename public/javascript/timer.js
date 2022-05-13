@@ -10,7 +10,7 @@ const countdown = (countTime, timeIncrement, onTimeOut)=>{
         count += timeIncrement
         let remainingTime = countTime-count
         let minutes = Math.floor(remainingTime/(60*1000))
-        let seconds = Math.floor(remainingTime/1000)
+        let seconds = Math.floor(remainingTime/1000%60)
         let millis = remainingTime%1000
         let strMinutes ='00'
         let strSeconds ='00'

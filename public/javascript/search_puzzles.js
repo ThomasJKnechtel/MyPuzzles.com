@@ -99,6 +99,7 @@ const playCasual = function playCasual(){
     sessionStorage.setItem('puzzles', JSON.stringify(puzzles))
     sessionStorage.setItem('mode','casual')
     sessionStorage.setItem('count',0)
+    sessionStorage.setItem('timeSpent', 0)
     sessionStorage.setItem('puzzle_results',JSON.stringify({}))
     window.location.href="http://localhost:7500/play.html"
 }
@@ -110,7 +111,9 @@ const play3Minute=function(){
     sessionStorage.setItem('puzzles', JSON.stringify(puzzles))
     sessionStorage.setItem('mode','3Minute')
     sessionStorage.setItem('count',0)
+    sessionStorage.setItem('timeSpent', 0)
     sessionStorage.setItem('puzzle_results',JSON.stringify({}))
+    window.location.href="http://localhost:7500/play.html"
 }
 /**
  * handles request to play 5 minute
@@ -120,5 +123,7 @@ const play5Minute=function(){
     sessionStorage.setItem('puzzles', JSON.stringify(puzzles))
     sessionStorage.setItem('mode','5Minute')
     sessionStorage.setItem('count',0)
+    sessionStorage.setItem('timeSpent', 0)
     sessionStorage.setItem('puzzle_results',JSON.stringify({}))
+    window.location.href="http://localhost:7500/play.html"
 }
