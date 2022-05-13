@@ -36,7 +36,7 @@ const startGame = async function startGame(){
         promotionMove: null,
         orientation:(game.turn()==='w')?"white":"black"
     }
-    const promote = function promote(elem){
+    const promote = function(elem){
         const type =  this.getAttribute('type')
         let div = document.getElementById('promotionPopup')
         div.innerHTML = ""
@@ -48,7 +48,7 @@ const startGame = async function startGame(){
         updateProgress(boardState, continuation,move)
         boardSetUp(board, game, continuation, boardState, displayPromotionPopup, boardState.orientation)
     }
-    const displayPromotionPopup = function displayPromotionPopup(white, fileNumber){
+    const displayPromotionPopup = function(white, fileNumber){
         const peiceImageNames = ['wQ.png','wN.png','wR.png','wB.png', 'bQ.png', 'bN.png','bR.png','bB.png']
         const pieceTypes = ['q','n','r','b']
         for(let i=0; i<4; i++){
