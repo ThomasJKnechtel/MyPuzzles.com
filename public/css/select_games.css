@@ -1,0 +1,62 @@
+html, body{
+    background-color: gray;
+    height: 100%;
+}
+h1{
+    font-size: 40px;
+}
+label, legend, button{
+    font-size: x-large;
+    margin-right: 10px;
+}
+legend{
+    font-size: x-large;
+}
+input{
+    font-size: x-large;
+    margin-right: 50px;
+}
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 100%;
+    
+}
+
+form{
+    background-color: rgb(196, 196, 196);
+    padding: 20px;
+    max-width: 1400px;
+    width: 100%;
+    border: solid white 3px;
+}
+section{
+    display: flex;
+    margin-bottom: 50px;
+    width: 100%;
+}
+fieldset{
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: fit-content;
+}
+table{
+    width: 100%;
+}
+th{
+    background-color: rgb(205, 205, 255); 
+}
+.continuation{
+    background-color: black;
+    width: fit-content;
+}
+.continuation:hover{
+    background-color: transparent;
+}
+.clicked{
+    background-color: rgba(142, 200, 247);
+}
+td{
+    position: relative;
+}

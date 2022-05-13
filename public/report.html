@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
+        <link rel="stylesheet" href="./css/report.css">
+    </header>
+    <body>
+        <div style="display: flex; flex-wrap:wrap; justify-content: center;">
+            <h1 style="width: 100%; text-align: center; font-size: 40px;">Report</h1>
+            <div id="statsContainer">
+                <h2 style="width: 100%; text-align: center; font-size: 30px;">Session Stats</h2>
+                <section>
+                    <label>Puzzles Attempted:   </label><label id='puzzlesAttempted'></label>
+                </section>
+                <section>
+                    <label>Success Rate:   </label><label id='successRate'></label>
+                </section>
+                <section>
+                    <label>Longest Streak:   </label><label id='longestStreak'></label>
+                </section>
+              
+               
+            </div>
+            <div>
+                <button class="dropdown">Puzzles</button>
+                <div id="puzzlesContainer"></div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+        <script src="javascript/report.js"></script>
+    </body>
+</html>

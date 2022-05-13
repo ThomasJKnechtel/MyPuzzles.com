@@ -1,0 +1,71 @@
+.boardContainer{
+    width: 100%;
+}
+.puzzleContainer{
+    width: 150px;
+    display: flex;
+    flex-wrap: wrap;
+    border-width: 1px;
+    border-style: solid;
+    margin: 10px;
+    padding: 3px;
+    background-color: white;
+}
+#puzzlesContainer{
+    display: flex;
+    flex-wrap: wrap;
+    border-style: outset;
+    border-top: none;
+    background-color: gray;
+}
+#statsContainer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    
+}
+#puzzlesContainer{
+    font-size: large;
+    width: 100%;
+}
+
+.passed{
+    background-color: green;
+    font-weight: bold;
+}
+.failed{
+    background-color: rgb(146, 0, 0);
+    font-weight: bold;
+}
+.continuation{
+    width: fit-content;
+    background-color: black;
+}
+.continuation:hover{
+    background-color: white;
+}
+section{
+    margin: 10px;
+    font-size: large;
+    padding: 3px;
+}
+.dropdown{
+    background-color: gray;
+    font-size: 30px;
+    border-style: outset;
+    display: inline-flex;
+    border-bottom: none;
+    border-color: #eeeeee;
+    border-width: 3px;
+}
+.dropdown::after{
+    content: '';
+    width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 20px solid rgb(170, 170, 170);
+    display: inline-block;
+    margin: 10px;
+}

@@ -1,7 +1,7 @@
-from datetime import date, datetime
+from datetime import datetime
 from distutils.log import error
 from typing import Tuple
-from chess.pgn import read_game, Game, GameNode
+from chess.pgn import read_game, Game
 from dotenv import dotenv_values
 import chess.engine as engine
 import ssl
@@ -9,6 +9,8 @@ import time
 import urllib.request
 import urllib.error
 import pyodbc
+import json
+from sys import argv
 from GameAnalysis import GameAnalysis
 
 def getGames(fileName: str)->list[Game]:
@@ -60,38 +62,46 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
     ... [['h7f7'], '8/7R/4p3/5kp1/4R3/1P3P2/2r4b/5K2 w - - 3 53']]]"""
     puzzles = [] 
     gameAnalysis = GameAnalysis(game.board(), 16,4)
+    continuation = ""
+    count = 0
     for move in game.mainline_moves():
+        
+        if continuation.split(' ')[count] == gameAnalysis.board.san(move):  ## if correct continuation being played update board 
+                gameAnalysis.board.push(move)
+                count+=1
+                break
+        continuation=''
         if not gameAnalysis.updateBoard(move):
             error("Invalid Move in png")
             exit(1)
         gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
         if gameAnalysis.isWinning(0):
-            continuation = ""
+          
             gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             fen = gameAnalysis.board.fen()  ##set location and turn to return to
             turn = gameAnalysis.board.turn
             while gameAnalysis.isOnlyMove():
-                move = gameAnalysis.info[0]["pv"][0]
+                move =gameAnalysis.info[0]["pv"][0]
+                count = 0 
+                continuation+=gameAnalysis.board.san(move)+" "
                 if not gameAnalysis.updateBoard(move): 
                     error("Invalid Move in png")
                     exit(1)
-                continuation+=str(move)+" "
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             if(len(continuation)>0): 
-                puzzles.append((game.headers["White"], game.headers["Black"], datetime.strptime(game.headers["Date"],r'%Y.%m.%d'), fen,continuation, game.headers["Event"],0,0, 111))  
+                puzzles.append({'white':game.headers["White"],'black': game.headers["Black"], 'date':game.headers["Date"],'fen': fen,'continuation':continuation,'event': game.headers["Event"],'attempts':0,'success_rate':0,'user_id': 111})  
                 gameAnalysis.board.set_board_fen(fen.split(" ")[0])
                 gameAnalysis.board.turn=turn   ##return to mainline
     gameAnalysis.stopEngine()
     return puzzles
 
 def analyseGames(fileName: str):
-    """analyze games for puzzles and updates database"""
+    """analyze games for puzzles and returns list of puzzles"""
     puzzles = [] 
     games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+fileName) #path stored in enviromental variable
     for game in games:
         puzzles+=analyseGame(game)
-    if len(puzzles)>0:
-        updateDataBase(puzzles)
+    return puzzles
     
 def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, endDate=None):
     """saves pngs to Modules/PuzzleGenerator/gamePNGs.png.
@@ -99,7 +109,6 @@ def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, en
     try: 
         ssl._create_default_https_context=ssl._create_unverified_context
         url="https://lichess.org/api/games/user/{p}?vs={o}&rated=true&tags=true&clocks=false&evals=false&opening=false&max={n}&since={sd}&until={ed}&perfType={gt}".format(p = player, o=oppoent, n=nGames, gt=gameTypes, sd=startDate, ed=endDate)
-        print(url)
         urllib.request.urlretrieve(url, "Modules/PuzzleGenerator/gamePNGs.png")
     except urllib.error.HTTPError as ex:
         error(ex)
@@ -117,6 +126,16 @@ def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])
         error(ex)
         exit(1)
     cnxn.commit()
-    print("finished")
+if __name__ == '__main__':
+    
+    gamePerameters = json.loads(argv[1])
+    values = list(gamePerameters.values())
+    keys =list( gamePerameters.keys())
+    gameTypes = ''
+    for i in range(len(values)):
+        if(values[i]):
+            gameTypes+=keys[i]+'%2C'
+    
 
-analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")
+    saveGames(gamePerameters['playerName'], oppoent=gamePerameters['opponentName'], nGames=gamePerameters['numberGames'], gameTypes=gameTypes, startDate=gamePerameters['startDate'],endDate= gamePerameters['endDate'])
+    print(json.dumps(analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")))

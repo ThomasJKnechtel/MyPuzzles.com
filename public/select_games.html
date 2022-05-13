@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <link rel="stylesheet" href="./css/select_games.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
+        <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+        <script src='javascript/select_games.js'></script>
+    </header>
+    <body>
+        <div class="container">
+            <h1 style="text-align: center; width: 100%;">Select Games</h1>
+            <form id='gamePerameters'>
+                <section>
+                    <div>
+                        <label for="playerName">Player: </label><input type="text" name="playerName" maxlength="50">
+                    </div>
+                   <div>
+                        <label for="opponentName">Opponent: </label><input type="text" name="opponentName" maxlength="50">
+                   </div>
+                    
+                </section>
+                <section>
+                    <div>
+                        <label for="startDate">From: </label><input type="date" name="startDate">
+                    </div>
+                    <div>
+                        <label for="endDate">To: </label><input type="date" name="endDate">
+                    </div>
+                    
+                </section>
+                <fieldset name="Game Types">
+                    <legend>Game Types</legend>
+                    <label for="blitz">blitz: </label><input type="checkbox" name="blitz">
+                    <label for="bullet">bullet: </label><input type="checkbox" name="bullet">
+                    <label for="ultra-bullet">ultra-bullet: </label><input type="checkbox" name="ultra-bullet">
+                    <label for="rapid">rapid: </label><input type="checkbox" name="rapid">
+                    <label for="classical">classical: </label><input type="checkbox" name="clssical">
+                    <label for="correspondence">correspondence: </label><input type="checkbox" name="correspondence">
+                </fieldset>
+                <label for="numberGames">Number of Games: </label><input type="number" name="numberGames" max="20" min="1" value="10">
+                <input type="button" value="Submit" onclick = "generatePuzzles()">
+            </form>
+            <div style="height:40%; max-width: 1440px; width: 100%; background-color: white; margin-top: 10px;">
+                <table id='puzzlesTable'>
+                    <colgroup>
+                        <col style="background-color: white;">
+                        <col style="background-color: rgb(235, 235, 255);">
+                        <col style="background-color: white;">
+                        <col style="background-color: rgb(235, 235, 255);">
+                        <col style="background-color: white;">
+                        <col style="background-color: rgb(235, 235, 255);">
+                    </colgroup>
+                    <tbody id='puzzleTableBody'>
+                        <tr><th>White</th><th>Black</th><th>Date</th><th>Event</th><th>FEN</th><th>Continuation</th></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="container" style="height:fit-content; width: 100%;">
+                <button onclick="save()">Save</button><button onclick="deletePuzzles()">Delete</button>
+            </div>
+            
+        </div>
+       
+        
+    </body>
+</html>
