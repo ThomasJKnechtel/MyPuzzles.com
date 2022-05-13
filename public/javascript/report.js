@@ -49,14 +49,17 @@ const updateSessionStats = function(puzzles){
  * @returns {HTMLElement} puzzleElement
  */
 const createPuzzleElement = function(puzzleStats, puzzle, count){
-    let puzzleElement = document.createElement('div')
-    const date = new Date(puzzleStats['timeSpent'])
-    const timeSpent = new Date(puzzleStats['timeSpent']).toUTCString().split(" ")[4]
-    puzzleElement.classList.add('puzzleContainer')
-    let classType = (puzzleStats['result'])?"passed":"failed"
-    let innerHTML = `<label class=${classType}>Puzzle ${count}</label><div id="board${count}" class="boardContainer"></div><label>Time Spent: ${timeSpent}</label><label>Continuation:</label><label class="continuation">${puzzle.continuation}</label>`
-    puzzleElement.innerHTML = innerHTML
-    return puzzleElement
+    if(puzzleStats!==undefined){
+        let puzzleElement = document.createElement('div')
+        const date = new Date(puzzleStats['timeSpent'])
+        const timeSpent = new Date(puzzleStats['timeSpent']).toUTCString().split(" ")[4]
+        puzzleElement.classList.add('puzzleContainer')
+        let classType = (puzzleStats['result'])?"passed":"failed"
+        let innerHTML = `<label class=${classType}>Puzzle ${count}</label><div id="board${count}" class="boardContainer"></div><label>Time Spent: ${timeSpent}</label><label>Continuation:</label><label class="continuation">${puzzle.continuation}</label>`
+        puzzleElement.innerHTML = innerHTML
+        return puzzleElement
+    }
+    
 }
 /**
  * Updates puzzle stats 
@@ -67,9 +70,10 @@ const updatePuzzleStats = function(puzzlesStats, puzzles){
     let count = 0
     let container = document.getElementById("puzzlesContainer")
     container.innerHTML=''
-    puzzlesStats.map(puzzleStats => {
+    puzzles.map(puzzle => {
+        const puzzleStats = puzzlesStats[puzzle['puzzle_id']]
         const elem = createPuzzleElement(puzzleStats, puzzles[count], count)
-        const fen = puzzles[count]['fen']
+        const fen = puzzle['fen']
         
         container.innerHTML+=elem.outerHTML
         
@@ -83,4 +87,4 @@ const updatePuzzleStats = function(puzzlesStats, puzzles){
     })
 }
 updateSessionStats(Object.values(results))
-updatePuzzleStats(Object.values(results), puzzles)
+updatePuzzleStats(results, puzzles)
