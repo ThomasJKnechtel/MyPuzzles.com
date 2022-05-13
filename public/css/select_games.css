@@ -5,7 +5,7 @@ html, body{
 h1{
     font-size: 40px;
 }
-label, legend{
+label, legend, button{
     font-size: x-large;
     margin-right: 10px;
 }
