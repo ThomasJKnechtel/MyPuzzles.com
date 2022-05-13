@@ -22,6 +22,7 @@ const getPuzzle = function(){
 const startGame = async function startGame(){
     puzzle = getPuzzle()
     const continuation = puzzle.continuation.trim().split(' ')
+    const mode = sessionStorage.getItem('mode')
     board = Chessboard('myBoard');
     game = new Chess(puzzle.fen);
     
@@ -34,7 +35,8 @@ const startGame = async function startGame(){
         progress:"Solving",
         promotionInProgress:false,
         promotionMove: null,
-        orientation:(game.turn()==='w')?"white":"black"
+        orientation:(game.turn()==='w')?"white":"black",
+        mode: mode
     }
     const promote = function(elem){
         const type =  this.getAttribute('type')
