@@ -5,7 +5,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { getGameData } from './controllers/play.js'
-import {router} from './controllers/search_puzzles.js'
+import {searchPuzzlesRouter} from './controllers/search_puzzles.js'
 import {selectGamesRouter} from './controllers/select_games.js'
 import { reportRouter } from './controllers/report.js'
 const __filename = fileURLToPath(import.meta.url);
@@ -19,7 +19,7 @@ server.use(cookieParser())
 server.get("/play/game_data", getGameData)
 
 
-server.use('/search_puzzles.html',router)
+server.use('/search_puzzles.html',searchPuzzlesRouter)
 server.use('/select_games.html', selectGamesRouter)
 server.use('/report.html', reportRouter)
 

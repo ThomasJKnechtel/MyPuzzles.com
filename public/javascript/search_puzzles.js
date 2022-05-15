@@ -82,11 +82,13 @@ const getPuzzles = function(){
     if(clickedElements.length>0){
         clickedElements.map(element =>{
             puzzles.push(createPuzzle(element))
+            element.outerHTML=''
          })
     }else{
         const rows = Array.from(document.getElementsByClassName('row'))
         rows.map(row => {
             puzzles.push(createPuzzle(row))
+            row.outerHTML=''
         })
     }
     return puzzles
@@ -126,4 +128,14 @@ const play5Minute=function(){
     sessionStorage.setItem('timeSpent', 0)
     sessionStorage.setItem('puzzle_results',JSON.stringify({}))
     window.location.href="http://localhost:7500/play.html"
+}
+/**
+ * Removes selected puzzles from database
+ */
+const deletePuzzles = function(){
+    if(confirm('Are you sure you want to delete these puzzles?')){
+        const puzzles = getPuzzles()
+        fetch('search_puzzles.html/delete_puzzles',{method:'Delete', body:JSON.stringify(puzzles), headers:{'Content-Type':'application/json'}})
+    }
+
 }

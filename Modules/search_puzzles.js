@@ -2,6 +2,17 @@
 import mssql from 'mssql'
 import {config} from 'dotenv'
 config('.env')
+
+const sqlConfig = {
+    user:'MyPuzzles',
+    password: process.env.PASSWORD,
+    server: 'localhost',
+    database: 'MyPuzzles.com',
+    options:{
+        encrypt: true,
+        trustServerCertificate: true
+    }
+}
 /**
  * Gets a list of puzzles for user that matches the specified criteria
  * @param {Number} userid 
@@ -35,20 +46,11 @@ const getUserPuzzles =async function getUserPuzzles(userid,player, opponent, eve
         else return 'date DESC'
     }
     
-    const getPuzzles = async function getPuzzles(query){
-        const config = {
-            user:'MyPuzzles',
-            password: process.env.PASSWORD,
-            server: 'localhost',
-            database: 'MyPuzzles.com',
-            options:{
-                encrypt: true,
-                trustServerCertificate: true
-            }
-        }
+    const getPuzzles = async function(query){
+        
         let result=null
         try{
-            await mssql.connect(config)
+            await mssql.connect(sqlConfig)
         }catch(err){
             console.error(err)
             return "No Connection"
@@ -77,5 +79,29 @@ const getUserPuzzles =async function getUserPuzzles(userid,player, opponent, eve
     const puzzles = await getPuzzles(query)
     return puzzles
 }
-
-export {getUserPuzzles}
+/**
+ * deletes puzzles from database and sends status code
+ * @param {Array<Object>} puzzles 
+ * @param {Response} res 
+ */
+const deletePuzzles = async function(user_id, puzzles, res){
+    try{
+        mssql.connect(sqlConfig)
+    }catch(err){
+        console.log(err)
+        res.sendStatus(503)
+    }
+    
+    let query = 'DELETE FROM puzzles WHERE user_id = '+user_id+ ' AND puzzle_id = '+puzzles[0]['puzzle_id']
+    for(let i = 1; i<puzzles.length; i++){
+        query+= ' OR puzzle_id = '+puzzles[i]['puzzle_id']
+    }
+    try{
+        mssql.query(query)
+        res.sendStatus(204)
+    }catch(err){
+        console.log(err)
+        res.sendStatus(300)
+    }
+}
+export {getUserPuzzles, deletePuzzles}
