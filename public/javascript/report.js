@@ -72,7 +72,7 @@ const updatePuzzleStats = function(puzzlesStats, puzzles){
     container.innerHTML=''
     puzzles.map(puzzle => {
         const puzzleStats = puzzlesStats[puzzle['puzzle_id']]
-        const elem = createPuzzleElement(puzzleStats, puzzles[count], count)
+        const elem = createPuzzleElement(puzzleStats, puzzles[count], count+1)
         const fen = puzzle['fen']
         
         container.innerHTML+=elem.outerHTML
@@ -82,9 +82,26 @@ const updatePuzzleStats = function(puzzlesStats, puzzles){
             position: fen,
             showNotation: false
         }
-        const board = new ChessBoard('board'+count, config)
+        const board = new ChessBoard('board'+(count+1), config)
         count++
     })
 }
+/**
+ * sends all user stats to server to update
+ * @param {Object} results the results of each puzzle
+ * @param  {Array<Object>} puzzles an array of puzzle objects
+ * @param {Number} timeSpent the total time spent
+ */
+const updateUserStats = function(results, puzzles, timeSpent){
+    let userStats = {'session_stats':{}, 'puzzles':{}}
+    puzzles.map(puzzle =>{
+        const id = puzzle['puzzle_id']
+        const puzzleStats = results[id]
+        userStats['puzzles'][id]=puzzleStats
+    })
+    userStats['session_stats']= {'successRate':calculateSuccessRate(Object.values(results)), 'longestStreak':calculateLongestStreak(Object.values(results)), 'timeSpent': timeSpent}
+    fetch('report.html/updateUserStats', {method:'Post', headers:{'Content-Type':'application/json'}, body:JSON.stringify(userStats)})
+}
 updateSessionStats(Object.values(results))
 updatePuzzleStats(results, puzzles)
+updateUserStats(results, puzzles, sessionStorage.getItem('timeSpent'))
