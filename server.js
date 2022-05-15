@@ -8,6 +8,7 @@ import { getGameData } from './controllers/play.js'
 import {searchPuzzlesRouter} from './controllers/search_puzzles.js'
 import {selectGamesRouter} from './controllers/select_games.js'
 import { reportRouter } from './controllers/report.js'
+import { loginRouter } from './controllers/login.js'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 let server = express();
@@ -18,7 +19,7 @@ server.use(cookieParser())
 
 server.get("/play/game_data", getGameData)
 
-
+server.use('/login.html', loginRouter)
 server.use('/search_puzzles.html',searchPuzzlesRouter)
 server.use('/select_games.html', selectGamesRouter)
 server.use('/report.html', reportRouter)
