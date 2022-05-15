@@ -1,0 +1,23 @@
+h1 {
+    width: fit-content;
+    font-size: 30px;
+    text-align: center;
+    text-decoration: underline;
+}
+h2{
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+    text-align: center;
+}
+.container{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    transform: translateX(60px);
+}
+.logo{
+    transform: translateY(-45px);
+    margin-left: 20px;
+}
