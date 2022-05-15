@@ -86,7 +86,7 @@ const getUserPuzzles =async function getUserPuzzles(userid,player, opponent, eve
  */
 const deletePuzzles = async function(user_id, puzzles, res){
     try{
-        mssql.connect(sqlConfig)
+       await mssql.connect(sqlConfig)
     }catch(err){
         console.log(err)
         res.sendStatus(503)
@@ -97,7 +97,7 @@ const deletePuzzles = async function(user_id, puzzles, res){
         query+= ' OR puzzle_id = '+puzzles[i]['puzzle_id']
     }
     try{
-        mssql.query(query)
+        await mssql.query(query)
         res.sendStatus(204)
     }catch(err){
         console.log(err)
