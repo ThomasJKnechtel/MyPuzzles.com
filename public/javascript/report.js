@@ -49,14 +49,17 @@ const updateSessionStats = function(puzzles){
  * @returns {HTMLElement} puzzleElement
  */
 const createPuzzleElement = function(puzzleStats, puzzle, count){
-    let puzzleElement = document.createElement('div')
-    const date = new Date(puzzleStats['timeSpent'])
-    const timeSpent = new Date(puzzleStats['timeSpent']).toUTCString().split(" ")[4]
-    puzzleElement.classList.add('puzzleContainer')
-    let classType = (puzzleStats['result'])?"passed":"failed"
-    let innerHTML = `<label class=${classType}>Puzzle ${count}</label><div id="board${count}" class="boardContainer"></div><label>Time Spent: ${timeSpent}</label><label>Continuation:</label><label class="continuation">${puzzle.continuation}</label>`
-    puzzleElement.innerHTML = innerHTML
-    return puzzleElement
+    if(puzzleStats!==undefined){
+        let puzzleElement = document.createElement('div')
+        const date = new Date(puzzleStats['timeSpent'])
+        const timeSpent = new Date(puzzleStats['timeSpent']).toUTCString().split(" ")[4]
+        puzzleElement.classList.add('puzzleContainer')
+        let classType = (puzzleStats['result'])?"passed":"failed"
+        let innerHTML = `<label class=${classType}>Puzzle ${count}</label><div id="board${count}" class="boardContainer"></div><label>Time Spent: ${timeSpent}</label><label>Continuation:</label><label class="continuation">${puzzle.continuation}</label>`
+        puzzleElement.innerHTML = innerHTML
+        return puzzleElement
+    }
+    
 }
 /**
  * Updates puzzle stats 
@@ -67,9 +70,10 @@ const updatePuzzleStats = function(puzzlesStats, puzzles){
     let count = 0
     let container = document.getElementById("puzzlesContainer")
     container.innerHTML=''
-    puzzlesStats.map(puzzleStats => {
-        const elem = createPuzzleElement(puzzleStats, puzzles[count], count)
-        const fen = puzzles[count]['fen']
+    puzzles.map(puzzle => {
+        const puzzleStats = puzzlesStats[puzzle['puzzle_id']]
+        const elem = createPuzzleElement(puzzleStats, puzzles[count], count+1)
+        const fen = puzzle['fen']
         
         container.innerHTML+=elem.outerHTML
         
@@ -78,9 +82,26 @@ const updatePuzzleStats = function(puzzlesStats, puzzles){
             position: fen,
             showNotation: false
         }
-        const board = new ChessBoard('board'+count, config)
+        const board = new ChessBoard('board'+(count+1), config)
         count++
     })
 }
+/**
+ * sends all user stats to server to update
+ * @param {Object} results the results of each puzzle
+ * @param  {Array<Object>} puzzles an array of puzzle objects
+ * @param {Number} timeSpent the total time spent
+ */
+const updateUserStats = function(results, puzzles, timeSpent){
+    let userStats = {'session_stats':{}, 'puzzles':{}}
+    puzzles.map(puzzle =>{
+        const id = puzzle['puzzle_id']
+        const puzzleStats = results[id]
+        userStats['puzzles'][id]=puzzleStats
+    })
+    userStats['session_stats']= {'successRate':calculateSuccessRate(Object.values(results)), 'longestStreak':calculateLongestStreak(Object.values(results)), 'timeSpent': timeSpent}
+    fetch('report.html/updateUserStats', {method:'Post', headers:{'Content-Type':'application/json'}, body:JSON.stringify(userStats)})
+}
 updateSessionStats(Object.values(results))
-updatePuzzleStats(Object.values(results), puzzles)
+updatePuzzleStats(results, puzzles)
+updateUserStats(results, puzzles, sessionStorage.getItem('timeSpent'))

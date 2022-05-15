@@ -19,9 +19,13 @@ const getPuzzle = function(){
     sessionStorage.setItem('count',count)
     return puzzle
 }
+/**
+ * On game start initalize game state, and set up board
+ */
 const startGame = async function startGame(){
     puzzle = getPuzzle()
     const continuation = puzzle.continuation.trim().split(' ')
+    const mode = sessionStorage.getItem('mode')
     board = Chessboard('myBoard');
     game = new Chess(puzzle.fen);
     
@@ -34,9 +38,10 @@ const startGame = async function startGame(){
         progress:"Solving",
         promotionInProgress:false,
         promotionMove: null,
-        orientation:(game.turn()==='w')?"white":"black"
+        orientation:(game.turn()==='w')?"white":"black",
+        mode: mode
     }
-    const promote = function promote(elem){
+    const promote = function(elem){
         const type =  this.getAttribute('type')
         let div = document.getElementById('promotionPopup')
         div.innerHTML = ""
@@ -48,7 +53,7 @@ const startGame = async function startGame(){
         updateProgress(boardState, continuation,move)
         boardSetUp(board, game, continuation, boardState, displayPromotionPopup, boardState.orientation)
     }
-    const displayPromotionPopup = function displayPromotionPopup(white, fileNumber){
+    const displayPromotionPopup = function(white, fileNumber){
         const peiceImageNames = ['wQ.png','wN.png','wR.png','wB.png', 'bQ.png', 'bN.png','bR.png','bB.png']
         const pieceTypes = ['q','n','r','b']
         for(let i=0; i<4; i++){
@@ -71,21 +76,42 @@ const startGame = async function startGame(){
     }
     
     boardSetUp(board, game, continuation, boardState, displayPromotionPopup, boardState.orientation);
-    timer = countdown(10000, 10)
+    const timeSpent = parseInt(sessionStorage.getItem('timeSpent'))
+    if(mode==='3Minute')timer = countdown(1000*60*3-timeSpent, 10, finished)
+    else if(mode==='5Minute')timer = countdown(1000*60*5-timeSpent, 10, finished)
+    else timer = stopwatch(1000)
 }
-const giveUp = function(){
-    window.loction.href='http://localhost:7500/search_puzzles.html'
-}
-const nextPuzzle = function() { 
+/**
+ * If time expired or player gave up then display report
+ */
+const finished = function(){
+    endTime = Date.now()
     let puzzleResult = {
         "timeSpent":endTime-startTime,
+        "result":"Failed"
+    }
+    let puzzleResults = JSON.parse(sessionStorage.getItem('puzzle_results'))
+    puzzleResults[puzzle['puzzle_id']]=puzzleResult
+    sessionStorage.setItem('puzzle_results', JSON.stringify(puzzleResults))
+    window.location.href='http://localhost:7500/report.html'
+   
+}
+/**
+ * go to next puzzle and update the puzzle results object
+ */
+const nextPuzzle = function() { 
+    const timeSpent = endTime-startTime
+    let puzzleResult = {
+        "timeSpent": timeSpent,
         "result":(boardState["progress"]==="Passed")?true:false
     }
     let puzzleResults = JSON.parse(sessionStorage.getItem('puzzle_results'))
     puzzleResults[puzzle['puzzle_id']]=puzzleResult
     sessionStorage.setItem('puzzle_results', JSON.stringify(puzzleResults))
+    let totalTimeSpent =parseInt(sessionStorage.getItem('timeSpent')) + timeSpent
+    sessionStorage.setItem('timeSpent',totalTimeSpent)
     if(parseInt(sessionStorage.getItem('count')) === size){
-        window.location.href='http://localhost:7500/search_puzzles.html'
+        window.location.href='http://localhost:7500/report.html'
     }else{
         window.location.reload()
     }
