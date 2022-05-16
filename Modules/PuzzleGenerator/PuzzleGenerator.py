@@ -65,33 +65,34 @@ def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
     continuation = ""
     count = 0
     for move in game.mainline_moves():
-        
-        if continuation.split(' ')[count] == gameAnalysis.board.san(move):  ## if correct continuation being played update board 
-                gameAnalysis.board.push(move)
-                count+=1
-                break
+        try:
+            if continuation.split(' ')[count] == gameAnalysis.board.san(move):  ## if correct continuation being played update board 
+                    if gameAnalysis.updateBoard(move):
+                        count+=1
+                        break
+                    else:
+                        print("Invalid Move in png at ln 70: " + move.uci()+" fen: "+gameAnalysis.board.fen())
+        except Exception as e:
+            print(e)
         continuation=''
         if not gameAnalysis.updateBoard(move):
-            error("Invalid Move in png")
-            exit(1)
+            print("Invalid Move in png at ln 79: " + move.uci()+" fen: "+gameAnalysis.board.fen())
         gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
         if gameAnalysis.isWinning(0):
           
             gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
-            fen = gameAnalysis.board.fen()  ##set location and turn to return to
-            turn = gameAnalysis.board.turn
+            fen = gameAnalysis.board.fen() ##sets position to return to
             while gameAnalysis.isOnlyMove():
                 move =gameAnalysis.info[0]["pv"][0]
                 count = 0 
                 continuation+=gameAnalysis.board.san(move)+" "
                 if not gameAnalysis.updateBoard(move): 
-                    error("Invalid Move in png")
+                    print("Invalid Move in png at ln 79: " + move.uci()+" fen: "+gameAnalysis.board.fen())
                     exit(1)
                 gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
             if(len(continuation)>0): 
                 puzzles.append({'white':game.headers["White"],'black': game.headers["Black"], 'date':game.headers["Date"],'fen': fen,'continuation':continuation,'event': game.headers["Event"],'attempts':0,'success_rate':0,'user_id': 111})  
-                gameAnalysis.board.set_board_fen(fen.split(" ")[0])
-                gameAnalysis.board.turn=turn   ##return to mainline
+                gameAnalysis.board.set_fen(fen)
     gameAnalysis.stopEngine()
     return puzzles
 
@@ -139,3 +140,5 @@ if __name__ == '__main__':
 
     saveGames(gamePerameters['playerName'], oppoent=gamePerameters['opponentName'], nGames=gamePerameters['numberGames'], gameTypes=gameTypes, startDate=gamePerameters['startDate'],endDate= gamePerameters['endDate'])
     print(json.dumps(analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")))
+    
+    
