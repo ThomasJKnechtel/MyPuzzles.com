@@ -17,7 +17,7 @@ searchPuzzlesRouter.post('/search',upload.none() ,async (req,res)=>{
             res.json(puzzles)
         }
     }catch{
-        res.redirect('http://localhost:7500/login.html')
+        res.sendStatus(302)
     }
    
 })

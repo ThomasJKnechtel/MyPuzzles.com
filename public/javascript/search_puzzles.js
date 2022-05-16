@@ -2,18 +2,24 @@ const submitForm = async function submitForm(){
     const formData = new FormData(document.getElementById("puzzleSearchForm"))
     fetch('search_puzzles.html/search', {method:'POST', body:formData}).then(res => {
         if(res.status == 200)  res.json().then(puzzles =>{
-                const handleDate = date => {return new Date(date).toDateString()}
-                updateTable('tbody',puzzles, {'ignore':{'continuation':true,'puzzle_id':true}, 'handle':{'date':handleDate}})
-                let fens = Array.from(document.getElementsByClassName('fen'))
-                let count = 0
-                fens.map(element => {
-                    element.onmouseover=hover
-                    element.onmouseleave=leave
-                    element.id = puzzles[count]['puzzle_id']
-                    element.continuation = puzzles[count]['continuation']
-                    count++
-                });
+                if(puzzles.length==0)alert('No Puzzles found')
+                else{
+                    const handleDate = date => {return new Date(date).toDateString()}
+                    updateTable('tbody',puzzles, {'ignore':{'continuation':true,'puzzle_id':true}, 'handle':{'date':handleDate}})
+                    let fens = Array.from(document.getElementsByClassName('fen'))
+                    let count = 0
+                    fens.map(element => {
+                        element.onmouseover=hover
+                        element.onmouseleave=leave
+                        element.id = puzzles[count]['puzzle_id']
+                        element.continuation = puzzles[count]['continuation']
+                        count++
+                    });
+                }
+                
             })
+        else if(res.status == 302) window.location.href = 'http://localhost:7500/login.html'
+        else alert(res.statusText)
     })
 }
 
