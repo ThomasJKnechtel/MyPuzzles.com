@@ -17,8 +17,6 @@ server.use(bodyParser.json())
 server.use(express.static(__dirname+'/public'))
 server.use(cookieParser())
 
-server.get("/play/game_data", getGameData)
-
 server.use('/login.html', loginRouter)
 server.use('/search_puzzles.html',searchPuzzlesRouter)
 server.use('/select_games.html', selectGamesRouter)

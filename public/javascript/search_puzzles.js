@@ -1,18 +1,19 @@
 const submitForm = async function submitForm(){
     const formData = new FormData(document.getElementById("puzzleSearchForm"))
-    formData.append('user_id','111')
-    fetch('search_puzzles.html/search', {method:'POST', body:formData}).then(res => res.json()).then(puzzles =>{
-        const handleDate = date => {return new Date(date).toDateString()}
-        updateTable('tbody',puzzles, {'ignore':{'continuation':true,'puzzle_id':true}, 'handle':{'date':handleDate}})
-        let fens = Array.from(document.getElementsByClassName('fen'))
-        let count = 0
-        fens.map(element => {
-            element.onmouseover=hover
-            element.onmouseleave=leave
-            element.id = puzzles[count]['puzzle_id']
-            element.continuation = puzzles[count]['continuation']
-            count++
-        });
+    fetch('search_puzzles.html/search', {method:'POST', body:formData}).then(res => {
+        if(res.status == 200)  res.json().then(puzzles =>{
+                const handleDate = date => {return new Date(date).toDateString()}
+                updateTable('tbody',puzzles, {'ignore':{'continuation':true,'puzzle_id':true}, 'handle':{'date':handleDate}})
+                let fens = Array.from(document.getElementsByClassName('fen'))
+                let count = 0
+                fens.map(element => {
+                    element.onmouseover=hover
+                    element.onmouseleave=leave
+                    element.id = puzzles[count]['puzzle_id']
+                    element.continuation = puzzles[count]['continuation']
+                    count++
+                });
+            })
     })
 }
 

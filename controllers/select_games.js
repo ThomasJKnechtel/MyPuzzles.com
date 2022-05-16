@@ -3,6 +3,7 @@ import {spawn} from 'node:child_process'
 import {config} from 'dotenv'
 import multer from 'multer'
 import { save } from "../Modules/select_games.js";
+import {checkAuthenticated} from '../Modules/login.js'
 config('.env')
 
 const selectGamesRouter = Router()
@@ -16,7 +17,7 @@ selectGamesRouter.post('/generatePuzzles', upload.none(), async (req, res)=>{
         console.log(data.toString())
         res.json(JSON.parse(data.toString()))
     })
-    puzzleGenerator.stderr.on('data', (data)=>{
+    puzzleGenerator.stderr.on('error', (data)=>{
         console.log(data.toString())
         res.sendStatus(500)
     })
@@ -25,10 +26,11 @@ selectGamesRouter.post('/generatePuzzles', upload.none(), async (req, res)=>{
     });
 })
 selectGamesRouter.post('/save', async (req, res)=>{
-    try{
-        save(req.body, res)
-    }catch{
-        res.sendStatus(400)
+    const user_id = await checkAuthenticated(req).catch(res.redirect('http://localhost:7500/login.html'))
+    if(user_id!==undefined){
+        save(req.body, user_id, res)
     }
+   
+   
 })
 export{ selectGamesRouter}
