@@ -47,7 +47,8 @@ const addNewUser = async function(user_id){
         await mssql.connect(config)
         await mssql.query(query)
     }catch(err){
-        console.log(err)
+        if(!err instanceof mssql.RequestError)
+            console.log(err)
     }
     
 }
