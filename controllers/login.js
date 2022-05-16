@@ -1,6 +1,6 @@
 import { Router } from "express";
-import {verify} from '../Modules/login.js'
-const CLIENT_ID = '363664896936-hnbv6e362m5rs4lvdeb8236go8g0agpk.apps.googleusercontent.com'
+import {verify, addNewUser} from '../Modules/login.js'
+
 
 const loginRouter = Router()
 
@@ -9,8 +9,9 @@ loginRouter.post('/login', (req, res)=>{
     const token_body = req.body['g_csrf_token']
 
     if(token === token_body && token !== undefined){    //preventative measure against csrf attacks
-        verify(req.body.credential, CLIENT_ID).catch(console.error).then(()=>{
-            res.cookie('user_cookie',req.body.token,{expires:new Date(Date.now()+1200000), httpOnly: true})
+        verify(req.body.credential).catch(console.error).then((user_id)=>{
+            addNewUser(user_id)
+            res.cookie('user_cookie',req.body.credential,{expires:new Date(Date.now()+1200000), httpOnly: true})
             res.redirect('http://localhost:7500/select_games.html')
         });
     }else{
