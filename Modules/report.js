@@ -53,11 +53,11 @@ const updateUserStats = async function(userStats, res){
                 res.sendStatus(503)
             }else{
                 console.log(err)
-                res.sendStatus(300)
+                res.sendStatus(400)
             }
         }
     }else{
-        res.sendStatus(300)
+        res.sendStatus(400)
     }
     
 }

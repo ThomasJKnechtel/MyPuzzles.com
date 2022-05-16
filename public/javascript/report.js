@@ -100,7 +100,13 @@ const updateUserStats = function(results, puzzles, timeSpent){
         userStats['puzzles'][id]=puzzleStats
     })
     userStats['session_stats']= {'successRate':calculateSuccessRate(Object.values(results)), 'longestStreak':calculateLongestStreak(Object.values(results)), 'timeSpent': timeSpent}
-    fetch('report.html/updateUserStats', {method:'Post', headers:{'Content-Type':'application/json'}, body:JSON.stringify(userStats)})
+    fetch('report.html/updateUserStats', {method:'Post', headers:{'Content-Type':'application/json'}, body:JSON.stringify(userStats)}).then(res => {
+        if(res.status==302){
+            window.location.href='http://localhost:7500/login.html'
+        }else if(res.status != 204){
+            console.log(res.statusText)
+        }
+    })
 }
 updateSessionStats(Object.values(results))
 updatePuzzleStats(results, puzzles)
