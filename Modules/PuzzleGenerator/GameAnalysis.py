@@ -37,3 +37,8 @@ class GameAnalysis:
     def stopEngine(self):
         """Stops engine"""
         self.engine.close()
+    def getMove(self, ply: int)->chess.Move:
+        """Returns best move at ply"""
+        if self.info[0]['pv']>ply:
+            return self.info[0]['pv'][0]
+        else: return None
