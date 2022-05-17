@@ -28,7 +28,8 @@ const verify = async function(token) {
  */
 const checkAuthenticated = async function(req){
     let token = req.cookies["user_cookie"]
-    return await verify(token)['user_id']
+    const data =await verify(token)
+    return data['userid']
     
 }
 const addNewUser = async function(user_id){

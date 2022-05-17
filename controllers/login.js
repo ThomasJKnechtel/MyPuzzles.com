@@ -11,7 +11,6 @@ loginRouter.post('/login', (req, res)=>{
     if(token === token_body && token !== undefined){    //preventative measure against csrf attacks
         verify(req.body.credential).catch(console.error).then((data)=>{
             const user_id = data['user_id']
-            sessionStorage.setItem('image_url', data['picutre'])
             addNewUser(user_id)
             res.cookie('user_cookie',req.body.credential,{expires:new Date(Date.now()+1200000), httpOnly: true})
             res.redirect('http://localhost:7500/select_games.html')
