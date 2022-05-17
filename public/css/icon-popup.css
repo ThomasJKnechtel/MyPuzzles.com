@@ -1,6 +1,6 @@
 #icon-div{
     position: absolute;
-    right: 100px;
+    right: 50px;
     top: 10px;
     width: fit-content;
     height: fit-content;
@@ -16,8 +16,14 @@
 }
 #icon-div:hover > #navbar{
     display: flex;
+    background-color: white;
 }
-
+#icon-div:hover{
+    background-color: white;
+    padding: 2px;
+    border-radius: 3%;
+    border-style: outset;
+}
 #navbar{
     position: relative;
     display: none;
