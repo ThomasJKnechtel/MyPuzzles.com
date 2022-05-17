@@ -13,6 +13,7 @@ loginRouter.post('/login', (req, res)=>{
             const user_id = data['user_id']
             addNewUser(user_id)
             res.cookie('user_cookie',req.body.credential,{expires:new Date(Date.now()+1200000), httpOnly: true})
+            res.cookie('logged_in',true,{expires:new Date(Date.now()+1200000)})
             res.redirect('http://localhost:7500/select_games.html')
         });
     }else{

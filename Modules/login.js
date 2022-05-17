@@ -29,6 +29,8 @@ const verify = async function(token) {
 const checkAuthenticated = async function(req){
     let token = req.cookies["user_cookie"]
     const data =await verify(token)
+    let loggedIn = req.cookies['logged_in']
+    if(!loggedIn) throw EvalError
     return data['userid']
     
 }
