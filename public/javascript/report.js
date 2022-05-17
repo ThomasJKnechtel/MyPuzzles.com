@@ -108,6 +108,14 @@ const updateUserStats = function(results, puzzles, timeSpent){
         }
     })
 }
+const setIcon = function(){
+    const setIconSrc = (image_url) =>{ document.getElementById('icon').setAttribute('src', image_url)}
+    fetch('report.html/authenticate', {method:'Post', headers:{'Content-Type':'application/json'}}).then(res => {
+        if(res.status=204)  res.text().then(text => setIconSrc(text))
+        else location.href.replace('http://localhost:7500/login.html')
+    })
+}
 updateSessionStats(Object.values(results))
 updatePuzzleStats(results, puzzles)
 updateUserStats(results, puzzles, sessionStorage.getItem('timeSpent'))
+setIcon()

@@ -3,9 +3,10 @@
     <header>
         <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
         <link rel="stylesheet" href="./css/report.css">
+        <link rel="stylesheet" href="./css/icon-popup.css">
     </header>
     <body>
-        <div style="display: flex; flex-wrap:wrap; justify-content: center;">
+        <div style="display: flex; flex-wrap:wrap; justify-content: center; position: relative;">
             <h1 style="width: 100%; text-align: center; font-size: 40px;">Report</h1>
             <div id="statsContainer">
                 <h2 style="width: 100%; text-align: center; font-size: 30px;">Session Stats</h2>
@@ -25,6 +26,7 @@
                 <button class="dropdown">Puzzles</button>
                 <div id="puzzlesContainer"></div>
             </div>
+            <div id="icon-div"><img id='icon'><nav id="navbar"><ul><a href="http://localhost:7500/search_puzzles.html">Search Puzzles</a><a href="http://localhost:7500/select_games.html">Select Games</a><a onclick="signout()">Sign_Out</a></ul></nav></div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
         <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
