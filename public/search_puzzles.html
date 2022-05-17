@@ -3,15 +3,17 @@
     <header>
         <link rel="stylesheet" href="./css/form.css">
         <link rel="stylesheet" href="./css/search_puzzles.css">
+        <link rel="stylesheet" href="./css/icon-popup.css">
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
         <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+        <script src="./javascript/icon-popup.js"></script>
         <script src="./javascript/search_puzzles.js"></script>
         <script src="./javascript/updateTable.js"></script>
     </header>
     <body style="height: 100%;">
         
-        <div style="display: flex; justify-content: center; flex-wrap: wrap; height: 100%;">
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; height: 100%; position: relative;">
             <h1>Select Puzzles</h1>
             <div style="width: 100%; display: flex; justify-content: center;">
                 <form id='puzzleSearchForm'style="display: flex; flex-direction: row; flex-wrap: wrap;justify-content: space-between; background-color: rgb(196, 196, 196); border-color: honeydew; border-width: 3px; border-style: solid; justify-content: flex-start;max-width: 1400px;">
@@ -91,6 +93,7 @@
             <div style="max-width: 1400px; width: 100%; display: flex; justify-content: center;">
                 <button class="button" onclick="playCasual()">Casual</button><button class="button" onclick="play3Minute()">3 Minute</button><button class="button" onclick="play5Minute()">5 Minute</button><button class="button" onclick="deletePuzzles()">Delete</button>
             </div>
+            <div id="icon-div"><img id='icon'><nav id="navbar"><ul><a href="http://localhost:7500/select_games.html">Select Games</a><a onclick="signOut()">Sign_Out</a></ul></nav></div>
         </div>
         
     </body>

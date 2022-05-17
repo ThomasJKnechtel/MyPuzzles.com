@@ -2,9 +2,11 @@
 <html>
     <header>
         <link rel="stylesheet" href="./css/select_games.css">
+        <link rel="stylesheet" href="./css/icon-popup.css">
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css"  crossorigin="anonymous">
         <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+        <script src='javascript/icon-popup.js'></script>
         <script src='javascript/select_games.js'></script>
     </header>
     <body>
@@ -59,7 +61,7 @@
             <div class="container" style="height:fit-content; width: 100%;">
                 <button onclick="save()">Save</button><button onclick="deletePuzzles()">Delete</button>
             </div>
-            
+            <div id="icon-div"><img id='icon'><nav id="navbar"><ul><a href="http://localhost:7500/search_puzzles.html">Search Puzzles</a><a onclick="signOut()">Sign_Out</a></ul></nav></div>
         </div>
        
         

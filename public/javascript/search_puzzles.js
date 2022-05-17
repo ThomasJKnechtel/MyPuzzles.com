@@ -146,3 +146,4 @@ const deletePuzzles = function(){
     }
 
 }
+setIcon()

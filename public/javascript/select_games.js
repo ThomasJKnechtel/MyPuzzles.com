@@ -118,3 +118,5 @@ const deletePuzzles = function(){
         }
     }
 }
+
+setIcon()
