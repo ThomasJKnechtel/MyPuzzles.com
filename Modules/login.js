@@ -18,17 +18,17 @@ const verify = async function(token) {
     });
     const payload = ticket.getPayload();
     const userid = payload['sub'];
-    return userid
+    const picture = payload['picture']
+    return {userid, picture}
 }
 /**
  * 
- * @param {String} CLIENT_ID 
- * @param {Response} res 
+ * @param {Request} req
  * @returns the google user_id of user
  */
 const checkAuthenticated = async function(req){
     let token = req.cookies["user_cookie"]
-    return await verify(token)
+    return await verify(token)['user_id']
     
 }
 const addNewUser = async function(user_id){

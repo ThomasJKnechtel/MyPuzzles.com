@@ -26,11 +26,11 @@ selectGamesRouter.post('/generatePuzzles', upload.none(), async (req, res)=>{
     });
 })
 selectGamesRouter.post('/save', async (req, res)=>{
-    const user_id = await checkAuthenticated(req).catch(res.redirect('http://localhost:7500/login.html'))
-    if(user_id!==undefined){
+    try{
+        const user_id = await checkAuthenticated(req)
         save(req.body, user_id, res)
+    }catch{
+        res.sendStatus(302)
     }
-   
-   
 })
 export{ selectGamesRouter}
