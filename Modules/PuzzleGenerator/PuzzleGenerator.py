@@ -1,6 +1,10 @@
 from datetime import datetime
 from distutils.log import error
-from typing import Tuple
+
+from os import stat
+from turtle import st
+from typing import List, Tuple
+from chess import Move
 from chess.pgn import read_game, Game
 from dotenv import dotenv_values
 import chess.engine as engine
@@ -34,7 +38,7 @@ def analyseGameMeasurements(fileOutput: str)->None:
     sums = (0,0,0)
     count = 0
     for game in games:
-        gameAnalysis = GameAnalysis(game.board(), 16,4)
+        gameAnalysis = GameAnalysis(game, 16,4)
         for move in game.mainline_moves():
             startTime = time.time_ns()
             gameAnalysis.updateBoard(move)
@@ -55,53 +59,14 @@ def analyseGameMeasurements(fileOutput: str)->None:
         file.write("Averages:\n")
         file.write(str(sums[0]/count)+" "+str(sums[1]/count)+" "+str(sums[2]/count)+"\n")
 
-def analyseGame(game: Game)->list[Tuple[str,str,str,str, str,int,int, int]]:
-    """Generates puzzles for a game
-    >>>analyseGame(getGames("game"))
-    [[['d8d5'], '3r4/2R2pkp/1q2pbp1/p7/1p2Q3/1P3P2/4P2P/2R4K b - - 9 37'], [['b4e4'], '8/7R/4p3/4k1p1/1R6/1P3P2/2r4b/5K2 w - - 0 52'], ... 
-    ... [['h7f7'], '8/7R/4p3/5kp1/4R3/1P3P2/2r4b/5K2 w - - 3 53']]]"""
-    puzzles = [] 
-    gameAnalysis = GameAnalysis(game.board(), 16,4)
-    continuation = ""
-    count = 0
-    for move in game.mainline_moves():
-        try:
-            if continuation.split(' ')[count] == gameAnalysis.board.san(move):  ## if correct continuation being played update board 
-                    if gameAnalysis.updateBoard(move):
-                        count+=1
-                        break
-                    else:
-                        print("Invalid Move in png at ln 70: " + move.uci()+" fen: "+gameAnalysis.board.fen())
-        except Exception as e:
-            print(e)
-        continuation=''
-        if not gameAnalysis.updateBoard(move):
-            print("Invalid Move in png at ln 79: " + move.uci()+" fen: "+gameAnalysis.board.fen())
-        gameAnalysis.getAnalysis(1, engine.INFO_SCORE)
-        if gameAnalysis.isWinning(0):
-          
-            gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
-            fen = gameAnalysis.board.fen() ##sets position to return to
-            while gameAnalysis.isOnlyMove():
-                move =gameAnalysis.info[0]["pv"][0]
-                count = 0 
-                continuation+=gameAnalysis.board.san(move)+" "
-                if not gameAnalysis.updateBoard(move): 
-                    print("Invalid Move in png at ln 79: " + move.uci()+" fen: "+gameAnalysis.board.fen())
-                    exit(1)
-                gameAnalysis.getAnalysis(2,engine.INFO_SCORE|engine.INFO_PV)
-            if(len(continuation)>0): 
-                puzzles.append({'white':game.headers["White"],'black': game.headers["Black"], 'date':game.headers["Date"],'fen': fen,'continuation':continuation,'event': game.headers["Event"],'attempts':0,'success_rate':0,'user_id': 111})  
-                gameAnalysis.board.set_fen(fen)
-    gameAnalysis.stopEngine()
-    return puzzles
+
 
 def analyseGames(fileName: str):
     """analyze games for puzzles and returns list of puzzles"""
     puzzles = [] 
     games = getGames(dotenv_values(".env")["WEBSITE_PATH"]+fileName) #path stored in enviromental variable
     for game in games:
-        puzzles+=analyseGame(game)
+        puzzles+= GameAnalysis(game, 16,4).analyseGame()
     return puzzles
     
 def saveGames(player:str, oppoent="", nGames=1, gameTypes="", startDate=None, endDate=None):
@@ -129,7 +94,7 @@ def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])
     cnxn.commit()
 if __name__ == '__main__':
     
-    gamePerameters = json.loads(argv[1])
+    """gamePerameters = json.loads(argv[1])
     values = list(gamePerameters.values())
     keys =list( gamePerameters.keys())
     gameTypes = ''
@@ -139,6 +104,8 @@ if __name__ == '__main__':
     
 
     saveGames(gamePerameters['playerName'], oppoent=gamePerameters['opponentName'], nGames=gamePerameters['numberGames'], gameTypes=gameTypes, startDate=gamePerameters['startDate'],endDate= gamePerameters['endDate'])
+    """
+    saveGames('jdrc', nGames=3)
     print(json.dumps(analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")))
     
     
