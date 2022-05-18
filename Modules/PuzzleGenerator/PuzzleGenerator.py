@@ -94,7 +94,7 @@ def updateDataBase(puzzles: Tuple[str, str, datetime, str, str,str,int,int,int])
     cnxn.commit()
 if __name__ == '__main__':
     
-    """gamePerameters = json.loads(argv[1])
+    gamePerameters = json.loads(argv[1])
     values = list(gamePerameters.values())
     keys =list( gamePerameters.keys())
     gameTypes = ''
@@ -104,8 +104,8 @@ if __name__ == '__main__':
     
 
     saveGames(gamePerameters['playerName'], oppoent=gamePerameters['opponentName'], nGames=gamePerameters['numberGames'], gameTypes=gameTypes, startDate=gamePerameters['startDate'],endDate= gamePerameters['endDate'])
-    """
-    saveGames('RitchieJamesAbeleda', nGames=10)
+    
+    #saveGames('RitchieJamesAbeleda', nGames=10)
     print(json.dumps(analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")))
     
     

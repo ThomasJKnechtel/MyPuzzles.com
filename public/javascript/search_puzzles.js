@@ -47,7 +47,7 @@ const hover = function hover(elem){
     boardDiv.style.top=-200+"px"
     boardDiv.style.width='200px'
     
-    boardDiv.style.zIndex='1'
+    boardDiv.style.zIndex='2'
     this.innerHTML+=boardDiv.outerHTML
    
     const config = {
