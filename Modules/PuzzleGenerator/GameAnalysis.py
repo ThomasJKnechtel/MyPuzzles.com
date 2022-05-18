@@ -111,7 +111,8 @@ class GameAnalysis:
                     self.state = STATE.PUZZLE_END
             elif self.state==STATE.PUZZLE_END:
                 self.board.set_fen(self.fen)
-                self.puzzles.append({'white':self.game.headers["White"],'black': self.game.headers["Black"], 'date':self.game.headers["Date"],'fen': self.fen,'continuation':self.currentContinuation,'event': self.game.headers["Event"],'attempts':0,'success_rate':0,})
+                if(len(self.currentContinuation)>0):
+                    self.puzzles.append({'white':self.game.headers["White"],'black': self.game.headers["Black"], 'date':self.game.headers["Date"],'fen': self.fen,'continuation':self.currentContinuation,'event': self.game.headers["Event"],'attempts':0,'success_rate':0,})
                 self.currentContinuation=''
                 self.state = STATE.ANALYSE_MOVE
             elif self.state == STATE.ALL_PUZZLES_GENERATED:
