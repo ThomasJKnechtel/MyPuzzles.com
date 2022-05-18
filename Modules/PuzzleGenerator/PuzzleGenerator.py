@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
     saveGames(gamePerameters['playerName'], oppoent=gamePerameters['opponentName'], nGames=gamePerameters['numberGames'], gameTypes=gameTypes, startDate=gamePerameters['startDate'],endDate= gamePerameters['endDate'])
     """
-    saveGames('jdrc', nGames=3)
+    saveGames('RitchieJamesAbeleda', nGames=10)
     print(json.dumps(analyseGames("/Modules/PuzzleGenerator/gamePNGs.png")))
     
     

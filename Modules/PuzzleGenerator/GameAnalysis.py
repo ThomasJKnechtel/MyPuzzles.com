@@ -36,11 +36,12 @@ class GameAnalysis:
         return False
     def isWinning(self, line: int, centipawn: int):
         """Check if current position has winning line i.e. CP score > 2 or Mate"""
-        score = self.info[line]["score"].relative
-        if score.is_mate():
-            return True
-        elif score.score()>centipawn:
-            return True
+        if(len(self.info)>line):
+            score = self.info[line]["score"].relative
+            if score.is_mate():
+                return True
+            elif score.score()>centipawn:
+                return True
         return False
     def isOnlyMove(self):
         """Check if only one winning move"""
@@ -54,9 +55,9 @@ class GameAnalysis:
         self.engine.close()
     def getMove(self, ply: int)->chess.Move:
         """Returns best move at ply"""
-        if len(self.info[0]['pv'])>ply:
+        try:
             return self.info[0]['pv'][0]
-        else: return None
+        except: return None
     def moveToString(self, move: chess.Move)->str:
         return self.board.san(move)
     def analyseGame(self)->list[Tuple[str,str,str,str, str,int,int, int]]:
@@ -89,16 +90,23 @@ class GameAnalysis:
                 else: self.state=STATE.ANALYSE_MOVE
             elif self.state== STATE.WINNING_TURN:
                 move = self.getMove(0)
-                self.currentContinuation += self.moveToString(move)
-                self.updateBoard(move)
-                self.state = STATE.LOSING_TURN
+                if move == None:
+                    self.state = STATE.PUZZLE_END
+                else:
+                    self.currentContinuation += self.moveToString(move)
+                    self.updateBoard(move)
+                    self.state = STATE.LOSING_TURN
+                    
+               
             elif self.state==STATE.LOSING_TURN:
                 move = self.getMove(1)
-                self.updateBoard(move)
-                self.getAnalysis(2, engine.INFO_SCORE|engine.INFO_PV)
-                if self.isOnlyMove() and move is not None:
-                    self.currentContinuation += self.moveToString(move)+" " 
-                    self.state = STATE.WINNING_TURN
+                if move is not None:
+                    self.updateBoard(move)
+                    self.getAnalysis(2, engine.INFO_SCORE|engine.INFO_PV)
+                    if self.isOnlyMove():
+                        self.currentContinuation += self.moveToString(move)+" " 
+                        self.state = STATE.WINNING_TURN
+                    else: self.state = STATE.PUZZLE_END
                 else: 
                     self.state = STATE.PUZZLE_END
             elif self.state==STATE.PUZZLE_END:
@@ -107,6 +115,7 @@ class GameAnalysis:
                 self.currentContinuation=''
                 self.state = STATE.ANALYSE_MOVE
             elif self.state == STATE.ALL_PUZZLES_GENERATED:
+                self.stopEngine()
                 return self.puzzles
         while puzzles is None:
             puzzles = stateMachine()
